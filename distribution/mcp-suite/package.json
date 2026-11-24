@@ -1,0 +1,49 @@
+{
+  "name": "@nuvoraxis/evm-guard-mcp-suite",
+  "version": "0.1.0",
+  "description": "Unified zero-dependency EVM AML screening (AegisGate), RPC failover & pre-flight tx simulation (GasPulse), and smart-contract invariant monitor (AuditPulse) MCP & x402 HTTP suite.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "x402",
+    "base",
+    "usdc",
+    "evm",
+    "aml",
+    "ofac",
+    "gas-estimator",
+    "tx-simulation",
+    "smart-contract-security",
+    "defi"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "servers": {
+    "aegisgate": {
+      "entry": "../../products/aegisgate/src/mcp_server.mjs",
+      "tools": ["screen_evm_address"],
+      "httpEndpoints": ["/health", "/v1/pricing", "/openapi.json", "/v1/screen"]
+    },
+    "gaspulse": {
+      "entry": "../../products/gaspulse/src/mcp_server.mjs",
+      "tools": ["estimate_gas", "simulate_transaction", "check_rpc_health"],
+      "httpEndpoints": ["/health", "/v1/pricing", "/v1/rpc-health", "/v1/gas", "/v1/simulate"]
+    },
+    "auditpulse": {
+      "entry": "../../products/auditpulse/src/mcp_server.mjs",
+      "tools": ["inspect_contract_invariants", "diff_contract_snapshots", "verify_x402_payment"],
+      "httpEndpoints": ["/health", "/v1/pricing", "/v1/inspect", "/v1/diff"]
+    }
+  },
+  "payment": {
+    "protocol": "x402",
+    "network": "base-mainnet",
+    "chainId": 8453,
+    "asset": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    "treasury": "0x703d3948cc102bf4bc0ef93ef330f56be2afd69c",
+    "receiveOnly": true
+  }
+}

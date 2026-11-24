@@ -1,0 +1,37 @@
+# Venture Engine B2B FinTech & Risk Suite
+
+> Zero-dependency serverless APIs + stdio MCP servers for AI agents, DeFi protocols, and Web3 payment rails across Base, Ethereum, and Arbitrum. Pay per call via x402 Base Mainnet USDC or onboard via Fail-Closed KYB self-serve B2B plans.
+
+## Settlement & Compliance
+- Receive-Only Treasury: 0x703d3948cc102bf4bc0ef93ef330f56be2afd69c
+- Payment Asset: Base Mainnet USDC (0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, chainId 8453, 6 decimals)
+- Compliance Gate: Fail-Closed OFAC SDN, Rosfinmonitoring, mixer/darknet, prohibited jurisdiction, and non-defense screening
+- Discovery Manifests: /.well-known/x402.json | /openapi.json | /v1/plans | /health
+
+## Products
+
+### 1. AegisGate — EVM Wallet AML, Sanctions & Contract Risk API
+- Endpoints: GET /v1/screen?address=0x...&chain=base ($0.01 USDC / 10000 units)
+- Features: OFAC/mixer check, live balance/nonce/bytecode inspection, EIP-1967 upgradeable proxy slot detection
+- MCP Tool: screen_evm_address
+
+### 2. GasPulse & Mempool Guard — RPC Failover, EIP-1559 Gas & Tx Simulation
+- Endpoints: GET /v1/gas ($0.01 USDC), POST /v1/simulate ($0.01 USDC), GET /v1/rpc-health (free)
+- Features: EWMA latency routing, block-lag failover, eth_call/eth_estimateGas revert decoding, mempool front-run checks
+- MCP Tools: estimate_gas, simulate_transaction, check_rpc_health
+
+### 3. AuditPulse — Continuous Smart-Contract & Pool Invariant Risk Monitor
+- Endpoints: GET|POST /v1/inspect ($0.02 USDC), POST /v1/diff ($0.01 USDC)
+- Features: Opcode scanner, proxy/admin slots, ERC-20 sanity, Uniswap V2/V3 & ERC-4626 reserve cross-checks, Slack/Discord diff alerts
+- MCP Tools: inspect_contract_invariants, diff_contract_snapshots, verify_x402_payment
+
+## Unified B2B Monthly Plans (Base USDC)
+- Starter: $49/mo (49000000 units) — 25,000 combined calls/mo across all 3 APIs
+- Growth: $199/mo (199000000 units) — 150,000 combined calls/mo + webhook diffs & priority routing
+- Enterprise: $499/mo (499000000 units) — 1,000,000 combined calls/mo + dedicated B2B multi-seat SLA
+
+## Self-Serve KYB Checkout Flow
+1. POST /v1/kyb-checkout with JSON: { companyName, jurisdiction, contactDomain, payerAddress, plan }
+2. Fail-Closed KYB/sanctions gate approves entity and returns deterministic invoiceId + exact Base USDC amount.
+3. Transfer exact USDC on Base Mainnet from payerAddress to 0x703d3948cc102bf4bc0ef93ef330f56be2afd69c.
+4. POST /v1/kyb-checkout again with the same fields + invoiceId + txHash for trustless on-chain verification.

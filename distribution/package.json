@@ -1,0 +1,14 @@
+{
+  "name": "venture-engine-distribution",
+  "version": "0.1.0",
+  "description": "Zero-cost distribution kit, unified MCP suite manifests, x402 directory entries, and developer integration guides for AegisGate, GasPulse, and AuditPulse.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "MIT"
+}

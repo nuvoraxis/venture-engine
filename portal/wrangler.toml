@@ -1,0 +1,14 @@
+name = "venture-engine-portal"
+main = "src/worker.mjs"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[vars]
+SERVICE_NAME = "venture-engine-portal"
+TREASURY_ADDRESS = "0x703d3948cc102bf4bc0ef93ef330f56be2afd69c"
+NETWORK = "base-mainnet"
+BASE_USDC_ADDRESS = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"

@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Venture Engine — Self-Serve EVM Risk, Gas &amp; Invariant API Portal</title>
+  <meta name="description" content="Zero-call self-serve B2B onboarding and x402 Base USDC portal for AegisGate, GasPulse, and AuditPulse." />
+  <style>
+    :root {
+      --bg: #070b14;
+      --surface: #0f172a;
+      --surface-alt: #131c31;
+      --border: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-strong: #0ea5e9;
+      --ok: #34d399;
+      --warn: #fbbf24;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: radial-gradient(circle at top left, #102442 0%, var(--bg) 55%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 2.25rem 1.25rem 4rem; }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .pill {
+      font-family: var(--mono);
+      font-size: 0.74rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent);
+    }
+    nav { display: flex; flex-wrap: wrap; gap: 1rem; font-size: 0.9rem; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h1 { font-size: clamp(1.8rem, 3.2vw, 2.5rem); margin: 0 0 0.6rem; line-height: 1.18; }
+    h2 { font-size: 1.25rem; margin: 0 0 0.75rem; color: #f8fafc; }
+    h3 { font-size: 1.02rem; margin: 0 0 0.4rem; color: #f8fafc; }
+    .lead { color: var(--muted); max-width: 74ch; margin: 0 0 1.75rem; font-size: 1.03rem; }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .card p { margin: 0.35rem 0; color: var(--muted); font-size: 0.92rem; }
+    .price { font-family: var(--mono); font-size: 1.55rem; color: var(--ok); margin: 0.3rem 0; }
+    .tag { font-family: var(--mono); font-size: 0.76rem; color: var(--accent); }
+    code, pre { font-family: var(--mono); font-size: 0.84rem; }
+    pre {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.9rem;
+      overflow-x: auto;
+      color: #cbd5e1;
+      margin: 0.75rem 0 0;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.25rem; }
+    input, select {
+      width: 100%;
+      padding: 0.56rem 0.7rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+    }
+    button {
+      margin-top: 0.85rem;
+      padding: 0.65rem 1.15rem;
+      border-radius: 8px;
+      border: 0;
+      background: var(--accent-strong);
+      color: #03111f;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.92rem;
+    }
+    button:hover { background: var(--accent); }
+    .treasury {
+      background: var(--surface-alt);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+      font-size: 0.92rem;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.84rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <strong>Venture Engine Portal</strong>
+        <span class="pill">Zero-Call Self-Serve &middot; x402 + KYB</span>
+      </div>
+      <nav>
+        <a href="/health">/health</a>
+        <a href="/v1/plans">/v1/plans</a>
+        <a href="/.well-known/x402.json">x402.json</a>
+        <a href="/llms.txt">llms.txt</a>
+        <a href="/openapi.json">openapi.json</a>
+      </nav>
+    </header>
+
+    <section>
+      <h1>Autonomous B2B FinTech &amp; EVM Risk Infrastructure</h1>
+      <p class="lead">
+        Three zero-dependency serverless APIs and MCP servers for AI agents, DeFi protocols, and crypto payment processors.
+        Start instantly with <strong>x402 Base Mainnet USDC</strong> pay-per-call or complete automated KYB below for a monthly B2B subscription.
+      </p>
+    </section>
+
+    <h2>The 3-API Suite</h2>
+    <section class="grid-3">
+      <div class="card">
+        <div class="tag">01 &middot; COMPLIANCE &amp; AML</div>
+        <h3>AegisGate</h3>
+        <p>Real-time EVM wallet OFAC/mixer screening, live RPC state check, and EIP-1967 proxy inspection across Base, Ethereum, and Arbitrum.</p>
+        <p><code>GET /v1/screen</code> &middot; <strong>$0.01 USDC</strong> / call &middot; MCP: <code>screen_evm_address</code></p>
+      </div>
+      <div class="card">
+        <div class="tag">02 &middot; EXECUTION &amp; MEMPOOL</div>
+        <h3>GasPulse &amp; Mempool Guard</h3>
+        <p>EWMA multi-chain RPC latency failover, EIP-1559 fee tiers, and pre-flight <code>eth_call</code>/<code>eth_estimateGas</code> revert &amp; front-run simulation.</p>
+        <p><code>GET /v1/gas</code>, <code>POST /v1/simulate</code> &middot; <strong>$0.01 USDC</strong> / call</p>
+      </div>
+      <div class="card">
+        <div class="tag">03 &middot; INVARIANTS &amp; ALERTS</div>
+        <h3>AuditPulse</h3>
+        <p>Smart-contract opcode scanner, admin/proxy slot monitor, ERC-20 &amp; Uniswap V2/V3 / ERC-4626 reserve invariant checks, and Slack/Discord diffs.</p>
+        <p><code>GET|POST /v1/inspect</code> ($0.02), <code>POST /v1/diff</code> ($0.01)</p>
+      </div>
+    </section>
+
+    <h2>Self-Serve B2B Monthly Plans (Base USDC)</h2>
+    <section class="grid-3">
+      <div class="card">
+        <h3>Starter</h3>
+        <div class="price">$49 / mo</div>
+        <p><code>49,000,000</code> Base USDC units &middot; 25,000 suite calls/month across AegisGate, GasPulse, and AuditPulse.</p>
+      </div>
+      <div class="card">
+        <h3>Growth</h3>
+        <div class="price">$199 / mo</div>
+        <p><code>199,000,000</code> Base USDC units &middot; 150,000 suite calls/month + webhook diff alerts and priority RPC routing.</p>
+      </div>
+      <div class="card">
+        <h3>Enterprise</h3>
+        <div class="price">$499 / mo</div>
+        <p><code>499,000,000</code> Base USDC units &middot; 1,000,000 suite calls/month + multi-seat B2B SLA.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Self-Serve KYB &amp; Base USDC Checkout (<code>POST /v1/kyb-checkout</code>)</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">
+        Fail-Closed compliance gate: anonymous entities, sanctioned addresses, darknet/defense requests, and prohibited jurisdictions are automatically rejected.
+        Step 1 issues a deterministic Base USDC invoice. Step 2 submits your Base USDC <code>txHash</code> for trustless on-chain verification.
+      </p>
+      <div class="form-grid">
+        <div>
+          <label for="companyName">Company Legal Name</label>
+          <input id="companyName" placeholder="Acme FinTech Labs Ltd" />
+        </div>
+        <div>
+          <label for="jurisdiction">Jurisdiction (ISO-2)</label>
+          <input id="jurisdiction" placeholder="AE" maxlength="2" />
+        </div>
+        <div>
+          <label for="contactDomain">Corporate Domain</label>
+          <input id="contactDomain" placeholder="acme-fintech.io" />
+        </div>
+        <div>
+          <label for="payerAddress">Payer EVM Address (Base)</label>
+          <input id="payerAddress" placeholder="0x1111111111111111111111111111111111111111" />
+        </div>
+        <div>
+          <label for="plan">Monthly Suite Plan</label>
+          <select id="plan">
+            <option value="starter">Starter ($49 USDC)</option>
+            <option value="growth" selected>Growth ($199 USDC)</option>
+            <option value="enterprise">Enterprise ($499 USDC)</option>
+          </select>
+        </div>
+        <div>
+          <label for="txHash">Base USDC txHash (Step 2, optional)</label>
+          <input id="txHash" placeholder="0x... (optional for step 1)" />
+        </div>
+      </div>
+      <button id="checkoutBtn" type="button">Run KYB &amp; Generate / Verify Invoice</button>
+      <pre id="checkoutOut">Submit company details to receive a deterministic Base Mainnet USDC invoice.</pre>
+    </section>
+
+    <section class="treasury">
+      <strong style="color:var(--ok);">RECEIVE-ONLY TREASURY (BASE MAINNET USDC)</strong><br />
+      Address: <code>0x703d3948cc102bf4bc0ef93ef330f56be2afd69c</code> &middot; USDC Contract: <code>0x833589fcd6edb6e08f4c7c32d4f71b54bda02913</code><br />
+      <span style="color:var(--muted);font-size:0.86rem;">
+        Zero private keys or signing logic exist anywhere in this infrastructure. All B2B counterparties must pass Fail-Closed KYB/AML screening before activation.
+      </span>
+    </section>
+
+    <footer>
+      <span>Venture Engine B2B Portal &middot; MIT License</span>
+      <span><a href="/.well-known/x402.json">x402 Manifest</a> &middot; <a href="/llms.txt">llms.txt</a> &middot; <a href="/openapi.json">OpenAPI 3.1</a></span>
+    </footer>
+  </div>
+
+  <script>
+    const btn = document.getElementById("checkoutBtn");
+    const out = document.getElementById("checkoutOut");
+    btn.addEventListener("click", async () => {
+      const payload = {
+        companyName: document.getElementById("companyName").value.trim(),
+        jurisdiction: document.getElementById("jurisdiction").value.trim(),
+        contactDomain: document.getElementById("contactDomain").value.trim(),
+        payerAddress: document.getElementById("payerAddress").value.trim(),
+        plan: document.getElementById("plan").value
+      };
+      const txHash = document.getElementById("txHash").value.trim();
+      if (txHash) payload.txHash = txHash;
+
+      out.textContent = "Running Fail-Closed KYB gate...";
+      try {
+        const res = await fetch("/v1/kyb-checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const text = await res.text();
+        out.textContent = `HTTP ${res.status}\n${text}`;
+      } catch (err) {
+        out.textContent = `Request failed: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>

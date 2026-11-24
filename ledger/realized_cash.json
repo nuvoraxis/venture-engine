@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "treasury_receive_only": "0x703d3948cc102bf4bc0ef93ef330f56be2afd69c",
+  "baseline_verified_at": "2026-11-25T01:26:45+03:00",
+  "baseline_balances": {
+    "base_usdc": 0.025,
+    "base_eth": 0.0
+  },
+  "realized_entries": [],
+  "operating_expenses": [],
+  "summary": {
+    "total_realized_revenue_usd": 0.0,
+    "total_expenses_usd": 0.0,
+    "net_profit_usd": 0.0
+  }
+}

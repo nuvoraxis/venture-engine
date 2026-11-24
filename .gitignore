@@ -1,0 +1,21 @@
+# Secrets & Credentials
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# Runtime / Logs / Temp / PII Risk
+*.log
+*.tmp
+*.sqlite
+*.db
+node_modules/
+__pycache__/
+.venv/
+tmp/
+.wrangler/
+dist/

@@ -1,0 +1,62 @@
+{
+  "name": "aegisgate-mcp",
+  "displayName": "AegisGate EVM AML & Contract Risk MCP",
+  "version": "0.1.0",
+  "description": "Zero-dependency EVM wallet OFAC/mixer sanctions screening and EIP-1967 upgradeable proxy contract inspector for autonomous AI agents.",
+  "license": "MIT",
+  "transport": ["stdio"],
+  "command": "node",
+  "args": ["src/mcp_server.mjs"],
+  "npx": {
+    "command": "npx",
+    "args": ["-y", "--package=aegisgate", "aegisgate-mcp"]
+  },
+  "mcpServers": {
+    "aegisgate": {
+      "command": "npx",
+      "args": ["-y", "--package=aegisgate", "aegisgate-mcp"]
+    }
+  },
+  "capabilities": {
+    "tools": [
+      {
+        "name": "screen_evm_address",
+        "description": "Screen an EVM address for OFAC/mixer risk, contract bytecode, and EIP-1967 proxy status.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string",
+              "description": "0x-prefixed EVM address",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            },
+            "chain": {
+              "type": "string",
+              "enum": ["base", "ethereum", "arbitrum"],
+              "default": "base"
+            }
+          },
+          "required": ["address"]
+        }
+      }
+    ]
+  },
+  "payment": {
+    "protocol": "x402",
+    "network": "base-mainnet",
+    "chainId": 8453,
+    "asset": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    "symbol": "USDC",
+    "decimals": 6,
+    "pricePerCallUsdc": "0.01",
+    "maxAmountRequired": "10000",
+    "treasury": "0x703d3948cc102bf4bc0ef93ef330f56be2afd69c",
+    "receiveOnly": true
+  },
+  "httpApi": {
+    "health": "/health",
+    "pricing": "/v1/pricing",
+    "openapi": "/openapi.json",
+    "screen": "/v1/screen"
+  }
+}

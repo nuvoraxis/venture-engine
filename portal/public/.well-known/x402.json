@@ -1,0 +1,75 @@
+{
+  "protocol": "x402",
+  "version": "1",
+  "suite": "Venture Engine B2B FinTech & Risk API Suite",
+  "treasury": {
+    "address": "0x703d3948cc102bf4bc0ef93ef330f56be2afd69c",
+    "receiveOnly": true,
+    "network": "base-mainnet",
+    "chainId": 8453,
+    "asset": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    "symbol": "USDC",
+    "decimals": 6
+  },
+  "onboarding": {
+    "mode": "zero-call-self-serve",
+    "kybCheckoutEndpoint": "/v1/kyb-checkout",
+    "openapi": "/openapi.json",
+    "llmsTxt": "/llms.txt"
+  },
+  "b2bPlansMonthlyUsdc": {
+    "starter": {
+      "priceUsdc": 49,
+      "amountUnits": "49000000",
+      "monthlyQuota": 25000,
+      "includes": ["aegisgate", "gaspulse", "auditpulse"]
+    },
+    "growth": {
+      "priceUsdc": 199,
+      "amountUnits": "199000000",
+      "monthlyQuota": 150000,
+      "includes": ["aegisgate", "gaspulse", "auditpulse"]
+    },
+    "enterprise": {
+      "priceUsdc": 499,
+      "amountUnits": "499000000",
+      "monthlyQuota": 1000000,
+      "includes": ["aegisgate", "gaspulse", "auditpulse"]
+    }
+  },
+  "services": [
+    {
+      "id": "aegisgate",
+      "name": "AegisGate",
+      "category": "EVM AML, Sanctions & Proxy Risk",
+      "chains": ["base", "ethereum", "arbitrum"],
+      "endpoints": [
+        { "method": "GET", "path": "/v1/screen", "x402Usdc": "0.01", "units": "10000" }
+      ],
+      "mcpTools": ["screen_evm_address"]
+    },
+    {
+      "id": "gaspulse",
+      "name": "GasPulse & Mempool Guard",
+      "category": "Multi-Chain RPC Failover, EIP-1559 Gas & Tx Simulation",
+      "chains": ["base", "ethereum", "arbitrum"],
+      "endpoints": [
+        { "method": "GET", "path": "/v1/gas", "x402Usdc": "0.01", "units": "10000" },
+        { "method": "POST", "path": "/v1/simulate", "x402Usdc": "0.01", "units": "10000" },
+        { "method": "GET", "path": "/v1/rpc-health", "x402Usdc": "0", "units": "0" }
+      ],
+      "mcpTools": ["estimate_gas", "simulate_transaction", "check_rpc_health"]
+    },
+    {
+      "id": "auditpulse",
+      "name": "AuditPulse",
+      "category": "Smart-Contract & Pool Invariant Risk Monitor",
+      "chains": ["base", "ethereum", "arbitrum"],
+      "endpoints": [
+        { "method": "GET", "path": "/v1/inspect", "x402Usdc": "0.02", "units": "20000" },
+        { "method": "POST", "path": "/v1/diff", "x402Usdc": "0.01", "units": "10000" }
+      ],
+      "mcpTools": ["inspect_contract_invariants", "diff_contract_snapshots", "verify_x402_payment"]
+    }
+  ]
+}

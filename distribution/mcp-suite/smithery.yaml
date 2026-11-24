@@ -1,0 +1,35 @@
+# Smithery MCP Configuration for the EVM Guard Suite (AegisGate, GasPulse, AuditPulse)
+# Zero external dependencies; strictly read-only JSON-RPC + Base USDC x402 receive-only settlement.
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required: []
+    properties:
+      service:
+        type: string
+        enum:
+          - aegisgate
+          - gaspulse
+          - auditpulse
+        default: aegisgate
+        description: Select which EVM Guard MCP server module to launch over stdio.
+      baseRpcUrl:
+        type: string
+        description: Optional custom Base Mainnet JSON-RPC URL override.
+  commandFunction: |-
+    (config) => {
+      const entryMap = {
+        aegisgate: "products/aegisgate/src/mcp_server.mjs",
+        gaspulse: "products/gaspulse/src/mcp_server.mjs",
+        auditpulse: "products/auditpulse/src/mcp_server.mjs"
+      };
+      const selected = entryMap[config.service || "aegisgate"] || entryMap.aegisgate;
+      return {
+        command: "node",
+        args: [selected],
+        env: config.baseRpcUrl ? { BASE_RPCS: config.baseRpcUrl } : {}
+      };
+    }
+  exampleConfig:
+    service: gaspulse

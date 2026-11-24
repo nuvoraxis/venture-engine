@@ -1,0 +1,110 @@
+{
+  "directorySchema": "x402-directory.v1",
+  "publisher": {
+    "name": "Nuvoraxis / Venture Engine",
+    "repository": "https://github.com/nuvoraxis/venture-engine",
+    "license": "MIT",
+    "receiveOnlyTreasury": "0x703d3948cc102bf4bc0ef93ef330f56be2afd69c"
+  },
+  "settlement": {
+    "protocol": "x402",
+    "version": "1",
+    "scheme": "exact",
+    "network": "base-mainnet",
+    "chainId": 8453,
+    "asset": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    "symbol": "USDC",
+    "decimals": 6,
+    "payTo": "0x703d3948cc102bf4bc0ef93ef330f56be2afd69c",
+    "paymentHeader": "X-Payment-Tx",
+    "b2bApiKeyHeader": "X-Api-Key",
+    "statelessApiKeyPrefix": "ve_live_"
+  },
+  "unifiedGateway": {
+    "baseUrlTemplate": "https://venture-engine.workers.dev",
+    "mcpHttpEndpoint": "/mcp",
+    "mcpDiscoveryFreeMethods": ["initialize", "tools/list", "ping"],
+    "mcpPaidMethods": ["tools/call"],
+    "discoveryEndpoints": ["/", "/health", "/v1/plans", "/.well-known/x402.json", "/llms.txt", "/openapi.json"],
+    "portalOnboarding": {
+      "kybCheckoutEndpoint": "/v1/kyb-checkout",
+      "verifyInvoiceEndpoint": "/v1/verify-invoice",
+      "issuesStatelessApiKey": true,
+      "plansMonthlyUsdc": {
+        "starter": 49,
+        "growth": 199,
+        "enterprise": 499
+      }
+    }
+  },
+  "services": [
+    {
+      "id": "aegisgate",
+      "name": "AegisGate — EVM AML, Sanctions & Proxy Risk API",
+      "category": "security-compliance",
+      "chains": ["base", "ethereum", "arbitrum"],
+      "mcpTools": ["screen_evm_address"],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/v1/screen",
+          "gatewayPath": "/aegis/v1/screen",
+          "priceUsdc": "0.01",
+          "maxAmountRequired": "10000",
+          "description": "Screen an EVM address for OFAC/mixer risk, bytecode presence, and EIP-1967 proxy status."
+        }
+      ],
+      "openapiPath": "products/aegisgate/public/openapi.json"
+    },
+    {
+      "id": "gaspulse",
+      "name": "GasPulse & Mempool Guard — RPC Failover & Pre-Flight Tx Simulation API",
+      "category": "infrastructure-simulation",
+      "chains": ["base", "ethereum", "arbitrum"],
+      "mcpTools": ["estimate_gas", "simulate_transaction", "check_rpc_health"],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/v1/gas",
+          "gatewayPath": "/gaspulse/v1/gas",
+          "priceUsdc": "0.01",
+          "maxAmountRequired": "10000",
+          "description": "EIP-1559 fee tiers (slow/standard/fast/urgent), base-fee trend, and congestion telemetry."
+        },
+        {
+          "method": "POST",
+          "path": "/v1/simulate",
+          "gatewayPath": "/gaspulse/v1/simulate",
+          "priceUsdc": "0.01",
+          "maxAmountRequired": "10000",
+          "description": "Pre-flight eth_call + eth_estimateGas simulation with Solidity revert decoding, balance check, and OFAC guard."
+        }
+      ]
+    },
+    {
+      "id": "auditpulse",
+      "name": "AuditPulse — Smart-Contract & Pool Invariant Monitor",
+      "category": "defi-risk-monitoring",
+      "chains": ["base", "ethereum", "arbitrum"],
+      "mcpTools": ["inspect_contract_invariants", "diff_contract_snapshots", "verify_x402_payment"],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/v1/inspect",
+          "gatewayPath": "/auditpulse/v1/inspect",
+          "priceUsdc": "0.02",
+          "maxAmountRequired": "20000",
+          "description": "Inspect bytecode risk signals, proxy/admin slots, ERC-20 supply/decimals, and DEX/vault reserve invariants."
+        },
+        {
+          "method": "POST",
+          "path": "/v1/diff",
+          "gatewayPath": "/auditpulse/v1/diff",
+          "priceUsdc": "0.01",
+          "maxAmountRequired": "10000",
+          "description": "Compute risk diff between two contract snapshots and format generic, Slack, or Discord webhook alerts."
+        }
+      ]
+    }
+  ]
+}

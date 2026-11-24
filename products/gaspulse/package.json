@@ -1,0 +1,16 @@
+{
+  "name": "gaspulse",
+  "version": "0.1.0",
+  "description": "Multi-chain EVM RPC latency/health failover, EIP-1559 gas estimator, and pre-flight eth_call/eth_estimateGas simulation API + MCP Server with x402 Base USDC settlement",
+  "type": "module",
+  "main": "src/server.mjs",
+  "scripts": {
+    "start": "node src/server.mjs",
+    "mcp": "node src/mcp_server.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "MIT"
+}

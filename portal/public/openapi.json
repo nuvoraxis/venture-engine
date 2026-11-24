@@ -1,0 +1,216 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Venture Engine Unified B2B Portal & KYB Gate API",
+    "version": "0.1.0",
+    "summary": "Self-serve B2B onboarding, Fail-Closed KYB/AML screening, and Base Mainnet USDC checkout for AegisGate, GasPulse, and AuditPulse.",
+    "description": "Zero-call self-serve onboarding API for the 3-API Web3 FinTech & Risk suite (AegisGate, GasPulse, AuditPulse). Validates corporate entity metadata, enforces Fail-Closed OFAC/Rosfinmonitoring/prohibited-jurisdiction screening, issues deterministic Base Mainnet USDC invoices to receive-only treasury 0x703d3948cc102bf4bc0ef93ef330f56be2afd69c, and verifies settlement txHashes on-chain without private keys.",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Current deployment origin"
+    },
+    {
+      "url": "https://portal.venture-engine.workers.dev",
+      "description": "Cloudflare Workers edge deployment template"
+    }
+  ],
+  "tags": [
+    { "name": "Discovery", "description": "Health, plans, x402, and LLM discovery" },
+    { "name": "Checkout", "description": "Fail-Closed KYB verification and Base USDC settlement" }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Discovery"],
+        "operationId": "getPortalHealth",
+        "summary": "Portal health and receive-only treasury status",
+        "responses": {
+          "200": {
+            "description": "Service operational",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/plans": {
+      "get": {
+        "tags": ["Discovery"],
+        "operationId": "getSuitePlans",
+        "summary": "Retrieve suite APIs and Starter / Growth / Enterprise Base USDC monthly plans",
+        "responses": {
+          "200": {
+            "description": "Unified suite catalog and pricing",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/x402.json": {
+      "get": {
+        "tags": ["Discovery"],
+        "operationId": "getX402Discovery",
+        "summary": "x402 suite service discovery manifest",
+        "responses": {
+          "200": {
+            "description": "x402 discovery JSON",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/llms.txt": {
+      "get": {
+        "tags": ["Discovery"],
+        "operationId": "getLlmsTxt",
+        "summary": "AI agent discovery summary (llms.txt)",
+        "responses": {
+          "200": {
+            "description": "Plain-text agent discovery index",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "tags": ["Discovery"],
+        "operationId": "getOpenApiSpec",
+        "summary": "OpenAPI 3.1.0 specification",
+        "responses": {
+          "200": {
+            "description": "OpenAPI 3.1.0 JSON document",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/kyb-checkout": {
+      "post": {
+        "tags": ["Checkout"],
+        "operationId": "kybCheckout",
+        "summary": "Run Fail-Closed KYB/AML screening, issue deterministic Base USDC invoice, and optionally verify on-chain settlement txHash",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/KybCheckoutRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "KYB approved (invoice issued) or on-chain Base USDC payment confirmed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/KybCheckoutResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed payload or invalid KYB fields",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "402": {
+            "description": "On-chain Base USDC txHash verification failed, insufficient, or already consumed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Fail-Closed KYB/AML/sanctions/jurisdiction rejection",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "required": ["status", "service", "version", "treasury", "network"],
+        "properties": {
+          "status": { "type": "string", "const": "ok" },
+          "service": { "type": "string", "const": "venture-engine-portal" },
+          "version": { "type": "string" },
+          "treasury": { "type": "string", "const": "0x703d3948cc102bf4bc0ef93ef330f56be2afd69c" },
+          "network": { "type": "string", "const": "base-mainnet" }
+        }
+      },
+      "KybCheckoutRequest": {
+        "type": "object",
+        "required": ["companyName", "jurisdiction", "contactDomain", "payerAddress", "plan"],
+        "properties": {
+          "companyName": { "type": "string", "minLength": 2, "maxLength": 160 },
+          "jurisdiction": { "type": "string", "pattern": "^[A-Za-z]{2}$", "description": "ISO 3166-1 alpha-2 country code" },
+          "contactDomain": { "type": "string", "description": "Corporate DNS domain (no free consumer webmail or darknet TLDs)" },
+          "payerAddress": { "type": "string", "pattern": "^0x[0-9a-fA-F]{40}$" },
+          "plan": { "type": "string", "enum": ["starter", "growth", "enterprise"] },
+          "useCase": { "type": "string", "maxLength": 300 },
+          "invoiceId": { "type": "string", "pattern": "^inv_[0-9a-f]{24}$" },
+          "txHash": { "type": "string", "pattern": "^0x[0-9a-fA-F]{64}$" }
+        }
+      },
+      "KybCheckoutResponse": {
+        "type": "object",
+        "required": ["ok", "status", "kybStatus", "paymentStatus", "invoice"],
+        "properties": {
+          "ok": { "type": "boolean" },
+          "status": { "type": "string", "enum": ["INVOICE_ISSUED", "PAID_AND_VERIFIED"] },
+          "kybStatus": { "type": "string", "enum": ["APPROVED", "VERIFIED"] },
+          "paymentStatus": { "type": "string", "enum": ["AWAITING_PAYMENT", "CONFIRMED"] },
+          "invoice": { "type": "object" },
+          "paymentReceipt": { "type": ["object", "null"] },
+          "entitlement": { "type": ["object", "null"] }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["ok", "error"],
+        "properties": {
+          "ok": { "type": "boolean", "const": false },
+          "kybStatus": { "type": "string" },
+          "paymentStatus": { "type": "string" },
+          "code": { "type": "string" },
+          "error": { "type": "string" }
+        }
+      }
+    }
+  }
+}

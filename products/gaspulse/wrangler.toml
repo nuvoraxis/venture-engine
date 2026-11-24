@@ -1,0 +1,9 @@
+name = "gaspulse"
+main = "src/worker.mjs"
+compatibility_date = "2026-01-01"
+
+[vars]
+RPC_TIMEOUT_MS = "4000"
+
+# Configure B2B verified API keys as an encrypted Cloudflare Worker secret (never commit keys):
+# npx wrangler secret put GASPULSE_API_KEYS

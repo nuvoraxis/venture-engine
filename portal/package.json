@@ -1,0 +1,15 @@
+{
+  "name": "venture-engine-portal",
+  "version": "0.1.0",
+  "description": "Unified Self-Serve B2B Portal, Fail-Closed KYB/AML Gate & AI Discovery Layer for AegisGate, GasPulse, and AuditPulse",
+  "type": "module",
+  "main": "src/server.mjs",
+  "scripts": {
+    "start": "node src/server.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20.10.0"
+  },
+  "license": "MIT"
+}

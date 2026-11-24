@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AegisGate — Real-Time EVM AML, Sanctions &amp; Contract Risk API</title>
+  <meta name="description" content="Zero-dependency EVM wallet AML, OFAC/mixer sanctions screening, and EIP-1967 proxy inspection API + MCP server with x402 Base USDC settlement." />
+  <style>
+    :root {
+      --bg: #070b14;
+      --surface: #0f172a;
+      --surface-alt: #131c31;
+      --border: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-strong: #0ea5e9;
+      --ok: #34d399;
+      --warn: #fbbf24;
+      --danger: #f87171;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: radial-gradient(circle at top right, #0f1f3a 0%, var(--bg) 55%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent);
+    }
+    nav { display: flex; flex-wrap: wrap; gap: 0.9rem; font-size: 0.92rem; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h1 { font-size: clamp(1.75rem, 3vw, 2.4rem); margin: 0 0 0.75rem; line-height: 1.2; }
+    h2 { font-size: 1.2rem; margin: 0 0 0.75rem; color: #f8fafc; }
+    p.lead { color: var(--muted); font-size: 1.05rem; max-width: 72ch; margin: 0 0 1.75rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .card h3 { margin: 0 0 0.4rem; font-size: 1rem; color: #f8fafc; }
+    .card p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+    .price { font-family: var(--mono); font-size: 1.35rem; color: var(--ok); margin: 0.35rem 0; }
+    pre, code { font-family: var(--mono); font-size: 0.86rem; }
+    pre {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      overflow-x: auto;
+      color: #cbd5e1;
+      margin: 0.6rem 0 0;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1.2fr 1.2fr auto;
+      gap: 0.6rem;
+      align-items: end;
+      margin-top: 0.75rem;
+    }
+    @media (max-width: 780px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+    label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.25rem; }
+    input, select {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+    }
+    button {
+      padding: 0.58rem 1rem;
+      border-radius: 8px;
+      border: 0;
+      background: var(--accent-strong);
+      color: #03111f;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    button:hover { background: var(--accent); }
+    .treasury-box {
+      background: var(--surface-alt);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+      font-size: 0.92rem;
+    }
+    .status-pill { font-family: var(--mono); font-size: 0.8rem; color: var(--ok); }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <strong>AegisGate</strong>
+        <span class="badge">v0.1.0 &middot; x402 + MCP</span>
+      </div>
+      <nav>
+        <a href="/health">/health</a>
+        <a href="/v1/pricing">/v1/pricing</a>
+        <a href="/openapi.json">/openapi.json</a>
+      </nav>
+    </header>
+
+    <section>
+      <h1>Real-Time EVM Wallet AML, Sanctions &amp; Contract Risk API</h1>
+      <p class="lead">
+        Zero-dependency serverless compliance and smart-contract screening for autonomous AI agents, Web3 payment rails,
+        and DeFi frontends across <strong>Base</strong>, <strong>Ethereum</strong>, and <strong>Arbitrum</strong>.
+        Pay per call via <strong>x402 Base Mainnet USDC</strong> or subscribe with a verified B2B API key.
+      </p>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h3>OFAC &amp; Mixer Screening</h3>
+        <p>Fail-closed detection against known OFAC SDN, Tornado Cash, and exploit addresses with instant <code>BLOCK / REVIEW / ALLOW</code> verdicts.</p>
+      </div>
+      <div class="card">
+        <h3>Live Bytecode &amp; EIP-1967 Proxy</h3>
+        <p>Queries live EVM JSON-RPC state for balance, nonce, contract bytecode footprint, and EIP-1967 upgradeable proxy implementation slots.</p>
+      </div>
+      <div class="card">
+        <h3>x402 Pay-Per-Call &amp; B2B Tiers</h3>
+        <div class="price">$0.01 USDC / call</div>
+        <p>Base Mainnet USDC micro-settlement (10,000 units) or verified KYB B2B monthly plans: Starter ($49), Growth ($199), Enterprise ($499).</p>
+      </div>
+    </section>
+
+    <section class="card" style="margin-bottom: 1.5rem;">
+      <h2>Self-Serve Endpoint Explorer</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">
+        Unpaid requests return HTTP <code>402 Payment Required</code> with exact x402 Base USDC settlement parameters.
+      </p>
+      <div class="form-row">
+        <div>
+          <label for="addr">EVM Address</label>
+          <input id="addr" value="0x8589427373d6d84e98730d7795d8f6f8731fda16" spellcheck="false" />
+        </div>
+        <div>
+          <label for="chain">Chain</label>
+          <select id="chain">
+            <option value="base" selected>base</option>
+            <option value="ethereum">ethereum</option>
+            <option value="arbitrum">arbitrum</option>
+          </select>
+        </div>
+        <div>
+          <label for="apiKey">X-Api-Key (optional)</label>
+          <input id="apiKey" placeholder="B2B key" autocomplete="off" />
+        </div>
+        <div>
+          <label for="txHash">X-Payment-Tx (optional)</label>
+          <input id="txHash" placeholder="0x Base USDC txHash" autocomplete="off" />
+        </div>
+        <button id="runBtn" type="button">Screen</button>
+      </div>
+      <pre id="output">Click "Screen" to test GET /v1/screen on this origin.</pre>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Quickstart (HTTP / x402)</h2>
+        <pre><code># 1. Request x402 payment challenge (HTTP 402)
+curl -i "https://&lt;host&gt;/v1/screen?address=0x2222222222222222222222222222222222222222&amp;chain=base"
+
+# 2. Pay $0.01 USDC on Base to treasury, then pass txHash
+curl -H "X-Payment-Tx: 0x&lt;64-hex-txhash&gt;" \
+  "https://&lt;host&gt;/v1/screen?address=0x2222222222222222222222222222222222222222&amp;chain=base"</code></pre>
+      </div>
+      <div class="card">
+        <h2>Stdio MCP Server</h2>
+        <pre><code>{
+  "mcpServers": {
+    "aegisgate": {
+      "command": "npx",
+      "args": ["-y", "--package=aegisgate", "aegisgate-mcp"]
+    }
+  }
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="treasury-box">
+      <span class="status-pill">RECEIVE-ONLY TREASURY</span><br />
+      Base / Ethereum / Arbitrum USDC settlement address:
+      <code>0x703d3948cc102bf4bc0ef93ef330f56be2afd69c</code><br />
+      <span style="color:var(--muted);font-size:0.86rem;">
+        Strictly non-custodial. Zero private keys or signing capabilities are held in this service.
+        Payers and B2B counterparties are screened under fail-closed AML &amp; KYB rules.
+      </span>
+    </section>
+
+    <footer>
+      <span>AegisGate &middot; MIT License</span>
+      <span><a href="/openapi.json">OpenAPI 3.1.0 Spec</a> &middot; <a href="/v1/pricing">Pricing JSON</a></span>
+    </footer>
+  </div>
+
+  <script>
+    const runBtn = document.getElementById("runBtn");
+    const output = document.getElementById("output");
+    runBtn.addEventListener("click", async () => {
+      const address = document.getElementById("addr").value.trim();
+      const chain = document.getElementById("chain").value;
+      const apiKey = document.getElementById("apiKey").value.trim();
+      const txHash = document.getElementById("txHash").value.trim();
+
+      const headers = {};
+      if (apiKey) headers["X-Api-Key"] = apiKey;
+      if (txHash) headers["X-Payment-Tx"] = txHash;
+
+      output.textContent = "Querying /v1/screen ...";
+      try {
+        const res = await fetch(`/v1/screen?address=${encodeURIComponent(address)}&chain=${encodeURIComponent(chain)}`, { headers });
+        const text = await res.text();
+        output.textContent = `HTTP ${res.status}\n${text}`;
+      } catch (err) {
+        output.textContent = `Request failed: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>

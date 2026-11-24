@@ -1,0 +1,16 @@
+name = "aegisgate"
+main = "src/worker.mjs"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[vars]
+SERVICE_NAME = "aegisgate"
+TREASURY_ADDRESS = "0x703d3948cc102bf4bc0ef93ef330f56be2afd69c"
+PRICE_PER_SCREEN_USDC = "0.01"
+
+# Configure B2B API keys as encrypted Cloudflare secrets (never commit keys):
+# npx wrangler secret put AEGISGATE_API_KEYS

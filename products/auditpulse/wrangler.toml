@@ -1,0 +1,14 @@
+name = "auditpulse"
+main = "src/worker.mjs"
+compatibility_date = "2026-01-01"
+
+[vars]
+SERVICE_NAME = "auditpulse"
+TREASURY_ADDRESS = "0x703d3948cc102bf4bc0ef93ef330f56be2afd69c"
+
+# Configure B2B API keys safely via Wrangler secrets (never commit keys here):
+#   npx wrangler secret put AUDITPULSE_API_KEYS
+# Optional custom RPC overrides:
+#   npx wrangler secret put BASE_RPC_URL
+#   npx wrangler secret put ETH_RPC_URL
+#   npx wrangler secret put ARB_RPC_URL

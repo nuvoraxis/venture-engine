@@ -1,0 +1,81 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "name": "EVM Guard MCP Suite (AegisGate + GasPulse + AuditPulse)",
+  "namespace": "nuvoraxis",
+  "license": "MIT",
+  "homepage": "https://github.com/nuvoraxis/venture-engine",
+  "description": "Zero-dependency EVM agent safety suite: real-time OFAC/mixer AML screening (AegisGate), multi-chain RPC failover and pre-flight tx simulation (GasPulse), and continuous smart-contract/pool invariant monitoring (AuditPulse). Supports local stdio MCP and single-URL remote HTTP MCP (POST /mcp).",
+  "runtime": "node>=20",
+  "transports": ["stdio", "http"],
+  "chains": ["base", "ethereum", "arbitrum"],
+  "remoteGateway": {
+    "baseUrlTemplate": "https://venture-engine.workers.dev",
+    "mcpEndpoint": "/mcp",
+    "kybCheckoutEndpoint": "/v1/kyb-checkout",
+    "verifyInvoiceEndpoint": "/v1/verify-invoice",
+    "restPrefixes": {
+      "aegisgate": "/aegis",
+      "gaspulse": "/gaspulse",
+      "auditpulse": "/auditpulse"
+    }
+  },
+  "payment": {
+    "protocol": "x402",
+    "network": "base-mainnet",
+    "chainId": 8453,
+    "asset": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    "treasury": "0x703d3948cc102bf4bc0ef93ef330f56be2afd69c",
+    "receiveOnly": true
+  },
+  "servers": [
+    {
+      "id": "aegisgate",
+      "command": "node",
+      "args": ["products/aegisgate/src/mcp_server.mjs"],
+      "tools": [
+        {
+          "name": "screen_evm_address",
+          "description": "Screen an EVM address for OFAC/mixer risk, contract bytecode, and EIP-1967 proxy status."
+        }
+      ]
+    },
+    {
+      "id": "gaspulse",
+      "command": "node",
+      "args": ["products/gaspulse/src/mcp_server.mjs"],
+      "tools": [
+        {
+          "name": "estimate_gas",
+          "description": "Estimate EIP-1559 gas tiers and congestion across Base, Ethereum, and Arbitrum."
+        },
+        {
+          "name": "simulate_transaction",
+          "description": "Pre-flight eth_call and eth_estimateGas simulation with Solidity revert decoding, balance checks, and AML screening."
+        },
+        {
+          "name": "check_rpc_health",
+          "description": "Probe multi-chain RPC latency, block lag, and circuit-breaker health."
+        }
+      ]
+    },
+    {
+      "id": "auditpulse",
+      "command": "node",
+      "args": ["products/auditpulse/src/mcp_server.mjs"],
+      "tools": [
+        {
+          "name": "inspect_contract_invariants",
+          "description": "Inspect proxy/admin slots, opcode risk signals, ERC-20 supply/decimals, and DEX/vault reserve invariants."
+        },
+        {
+          "name": "diff_contract_snapshots",
+          "description": "Diff two AuditPulse inspection snapshots and format generic, Slack, or Discord risk alerts."
+        },
+        {
+          "name": "verify_x402_payment",
+          "description": "Verify a Base Mainnet USDC x402 transaction receipt against the receive-only treasury."
+        }
+      ]
+    }
+  ]
+}
