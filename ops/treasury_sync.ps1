@@ -8,7 +8,7 @@
 param(
     [string]$WorkspaceRoot = (Split-Path -Parent $PSScriptRoot),
     [switch]$DryRun,
-    [int]$LookbackBlocks = 2000,
+    [int]$LookbackBlocks = 500,
     [int]$TimeoutSec = 10
 )
 
@@ -22,14 +22,14 @@ $Chains = @(
     @{
         Name = "base"
         Label = "Base Mainnet"
-        RpcUrl = "https://mainnet.base.org"
+        RpcUrls = @("https://mainnet.base.org", "https://base-rpc.publicnode.com", "https://base.llamarpc.com")
         UsdcContract = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
         CheckNativeEth = $true
     },
     @{
         Name = "arbitrum"
         Label = "Arbitrum One"
-        RpcUrl = "https://arb1.arbitrum.io/rpc"
+        RpcUrls = @("https://arb1.arbitrum.io/rpc", "https://arbitrum-one-rpc.publicnode.com")
         UsdcContract = "0xaf88d065e77c8cc2239327c5edb3a432268e5831"
         CheckNativeEth = $false
     }
@@ -79,7 +79,7 @@ function Parse-InvariantDecimal {
 
 function Invoke-JsonRpc {
     param(
-        [string]$RpcUrl,
+        [string[]]$RpcUrls,
         [string]$Method,
         [object[]]$Params
     )
@@ -90,14 +90,22 @@ function Invoke-JsonRpc {
         params = $Params
     } | ConvertTo-Json -Depth 6 -Compress
 
-    $resp = Invoke-RestMethod -Uri $RpcUrl -Method Post -ContentType "application/json" -Body $payload -TimeoutSec $TimeoutSec
-    if ($null -eq $resp) {
-        throw "Empty JSON-RPC response from $RpcUrl for $Method"
+    $lastError = $null
+    foreach ($url in $RpcUrls) {
+        try {
+            $resp = Invoke-RestMethod -Uri $url -Method Post -ContentType "application/json" -Body $payload -TimeoutSec $TimeoutSec
+            if ($null -eq $resp) {
+                throw "Empty JSON-RPC response from $url for $Method"
+            }
+            if ($resp.PSObject.Properties.Name -contains "error" -and $null -ne $resp.error) {
+                throw "RPC error ($Method @ $url): $($resp.error.message)"
+            }
+            return $resp.result
+        } catch {
+            $lastError = $_
+        }
     }
-    if ($resp.PSObject.Properties.Name -contains "error" -and $null -ne $resp.error) {
-        throw "RPC error ($Method): $($resp.error.message)"
-    }
-    return $resp.result
+    throw "All RPC endpoints failed for $($Method): $($lastError.Exception.Message)"
 }
 
 # 1. Fail-Closed Ledger Validation
@@ -133,7 +141,7 @@ Write-Host "Ledger Realized Cash  : `$$($ledgerRealizedUsd.ToString('F2', [Syste
 if ($DryRun) {
     Write-Host "[DRY-RUN] Skipping live network RPC calls. Planned targets:" -ForegroundColor Yellow
     foreach ($c in $Chains) {
-        Write-Host "  - $($c.Label): $($c.RpcUrl) (USDC=$($c.UsdcContract), Lookback=$LookbackBlocks blocks)"
+        Write-Host "  - $($c.Label): $($c.RpcUrls -join ', ') (USDC=$($c.UsdcContract), Lookback=$LookbackBlocks blocks)"
     }
     Write-Host "[DRY-RUN] Verified delta vs baseline: 0.000000 USDC (no mock revenue generated; ledger untouched)" -ForegroundColor Green
     exit 0
@@ -149,9 +157,9 @@ $allTransfers = @()
 
 foreach ($chain in $Chains) {
     Write-Host ""
-    Write-Host "--- Querying $($chain.Label) ($($chain.RpcUrl)) ---" -ForegroundColor Cyan
+    Write-Host "--- Querying $($chain.Label) ($($chain.RpcUrls[0])) ---" -ForegroundColor Cyan
 
-    $usdcHex = Invoke-JsonRpc -RpcUrl $chain.RpcUrl -Method "eth_call" -Params @(@{ to = $chain.UsdcContract; data = $balanceOfCalldata }, "latest")
+    $usdcHex = Invoke-JsonRpc -RpcUrls $chain.RpcUrls -Method "eth_call" -Params @(@{ to = $chain.UsdcContract; data = $balanceOfCalldata }, "latest")
     $usdcRaw = Convert-HexToBigInt -Hex $usdcHex
     $usdcStr = Format-TokenUnits -Amount $usdcRaw -Decimals 6
     $usdcDec = Parse-InvariantDecimal $usdcStr
@@ -161,45 +169,49 @@ foreach ($chain in $Chains) {
     Write-Host "  USDC Balance : $usdcStr USDC"
 
     if ($chain.CheckNativeEth) {
-        $ethHex = Invoke-JsonRpc -RpcUrl $chain.RpcUrl -Method "eth_getBalance" -Params @($CanonicalTreasury, "latest")
+        $ethHex = Invoke-JsonRpc -RpcUrls $chain.RpcUrls -Method "eth_getBalance" -Params @($CanonicalTreasury, "latest")
         $ethRaw = Convert-HexToBigInt -Hex $ethHex
         $ethStr = Format-TokenUnits -Amount $ethRaw -Decimals 18
         Write-Host "  ETH Balance  : $ethStr ETH"
     }
 
-    $tipHex = Invoke-JsonRpc -RpcUrl $chain.RpcUrl -Method "eth_blockNumber" -Params @()
-    $tipBlock = Convert-HexToBigInt -Hex $tipHex
-    $lookback = [System.Numerics.BigInteger]::new([Math]::Max(1, $LookbackBlocks))
-    $fromBlock = if ($tipBlock -gt $lookback) { $tipBlock - $lookback } else { [System.Numerics.BigInteger]::Zero }
-    $fromHex = "0x" + $fromBlock.ToString("x")
-    $toHex = "0x" + $tipBlock.ToString("x")
+    try {
+        $tipHex = Invoke-JsonRpc -RpcUrls $chain.RpcUrls -Method "eth_blockNumber" -Params @()
+        $tipBlock = Convert-HexToBigInt -Hex $tipHex
+        $lookback = [System.Numerics.BigInteger]::new([Math]::Max(1, $LookbackBlocks))
+        $fromBlock = if ($tipBlock -gt $lookback) { $tipBlock - $lookback } else { [System.Numerics.BigInteger]::Zero }
+        $fromHex = "0x" + $fromBlock.ToString("x")
+        $toHex = "0x" + $tipBlock.ToString("x")
 
-    $logs = Invoke-JsonRpc -RpcUrl $chain.RpcUrl -Method "eth_getLogs" -Params @(@{
-        fromBlock = $fromHex
-        toBlock = $toHex
-        address = $chain.UsdcContract
-        topics = @($TransferTopic, $null, $paddedTreasury)
-    })
-    if ($null -eq $logs) { $logs = @() }
+        $logs = Invoke-JsonRpc -RpcUrls $chain.RpcUrls -Method "eth_getLogs" -Params @(@{
+            fromBlock = $fromHex
+            toBlock = $toHex
+            address = $chain.UsdcContract
+            topics = @($TransferTopic, $null, $paddedTreasury)
+        })
+        if ($null -eq $logs) { $logs = @() }
 
-    $logCount = @($logs).Count
-    Write-Host "  Recent USDC Inbound Logs ($fromHex..$toHex): $logCount"
+        $logCount = @($logs).Count
+        Write-Host "  Recent USDC Inbound Logs ($fromHex..$toHex): $logCount"
 
-    foreach ($log in @($logs)) {
-        if (-not $log -or -not $log.topics -or $log.topics.Count -lt 3) { continue }
-        $fromAddr = "0x" + $log.topics[1].Substring($log.topics[1].Length - 40).ToLowerInvariant()
-        $amtRaw = Convert-HexToBigInt -Hex $log.data
-        $amtStr = Format-TokenUnits -Amount $amtRaw -Decimals 6
-        $amlFlag = if ($SanctionedSenders -contains $fromAddr) { "BLOCKED_OFAC_MIXER" } else { "CLEAR_PENDING_KYB" }
-        $allTransfers += [PSCustomObject]@{
-            chain = $chain.Name
-            txHash = $log.transactionHash
-            from = $fromAddr
-            amountUsdc = $amtStr
-            blockNumber = (Convert-HexToBigInt -Hex $log.blockNumber).ToString()
-            complianceStatus = $amlFlag
+        foreach ($log in @($logs)) {
+            if (-not $log -or -not $log.topics -or $log.topics.Count -lt 3) { continue }
+            $fromAddr = "0x" + $log.topics[1].Substring($log.topics[1].Length - 40).ToLowerInvariant()
+            $amtRaw = Convert-HexToBigInt -Hex $log.data
+            $amtStr = Format-TokenUnits -Amount $amtRaw -Decimals 6
+            $amlFlag = if ($SanctionedSenders -contains $fromAddr) { "BLOCKED_OFAC_MIXER" } else { "CLEAR_PENDING_KYB" }
+            $allTransfers += [PSCustomObject]@{
+                chain = $chain.Name
+                txHash = $log.transactionHash
+                from = $fromAddr
+                amountUsdc = $amtStr
+                blockNumber = (Convert-HexToBigInt -Hex $log.blockNumber).ToString()
+                complianceStatus = $amlFlag
+            }
+            Write-Host "    * tx=$($log.transactionHash) from=$fromAddr amount=$amtStr USDC status=$amlFlag"
         }
-        Write-Host "    * tx=$($log.transactionHash) from=$fromAddr amount=$amtStr USDC status=$amlFlag"
+    } catch {
+        Write-Host "  [WARN] Recent eth_getLogs skipped due to public RPC limit: $($_.Exception.Message)" -ForegroundColor Yellow
     }
 }
 
