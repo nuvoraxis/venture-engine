@@ -19,6 +19,7 @@ import { authenticateApiKeyHeader, parseStaticKeySet } from "./auth_tokens.mjs";
 export const MAX_MCP_BODY_BYTES = 512 * 1024;
 const STANDARD_TOOL_PRICE_UNITS = 10000n; // $0.01 Base USDC
 const INSPECT_TOOL_PRICE_UNITS = 20000n;  // $0.02 Base USDC
+const BATCH_TOOL_PRICE_UNITS = 50000n;    // $0.05 Base USDC (up to 20 addresses)
 
 export const ALL_MCP_TOOLS = Object.freeze([
   {
@@ -125,11 +126,30 @@ export const ALL_MCP_TOOLS = Object.freeze([
       },
       required: ["txHash"]
     }
+  },
+  {
+    name: "batch_screen_evm_addresses",
+    description: "Screen up to 20 EVM addresses in parallel for OFAC/mixer risk, contract bytecode, and EIP-1967 proxy status ($0.05 Base USDC).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        addresses: {
+          type: "array",
+          items: { type: "string" },
+          minItems: 1,
+          maxItems: 20,
+          description: "Array of 1 to 20 0x-prefixed EVM addresses"
+        },
+        chain: { type: "string", enum: ["base", "ethereum", "arbitrum"], default: "base" }
+      },
+      required: ["addresses"]
+    }
   }
 ]);
 
 const TOOL_PRICE_UNITS = new Map([
   ["screen_evm_address", STANDARD_TOOL_PRICE_UNITS],
+  ["batch_screen_evm_addresses", BATCH_TOOL_PRICE_UNITS],
   ["estimate_gas", STANDARD_TOOL_PRICE_UNITS],
   ["simulate_transaction", STANDARD_TOOL_PRICE_UNITS],
   ["check_rpc_health", STANDARD_TOOL_PRICE_UNITS],
@@ -179,6 +199,27 @@ async function runTool(toolName, args, { fetchImpl, rpcPool, consumedTxHashes, r
     const scopedFetch = buildChainOverrideFetch(fetchImpl, rpcOverrides);
     const report = await screenEvmAddress(args.address, chain, scopedFetch);
     return { content: [{ type: "text", text: JSON.stringify(report, null, 2) }] };
+  }
+
+  if (toolName === "batch_screen_evm_addresses") {
+    const addresses = Array.isArray(args.addresses) ? args.addresses : null;
+    if (!addresses || addresses.length === 0 || addresses.length > 20) {
+      throw new Error("addresses must be a non-empty array of 1 to 20 EVM addresses");
+    }
+    const chain = args.chain || "base";
+    const scopedFetch = buildChainOverrideFetch(fetchImpl, rpcOverrides);
+    const results = await Promise.all(
+      addresses.map((addr) => screenEvmAddress(String(addr || ""), chain, scopedFetch))
+    );
+    const summary = {
+      chain,
+      total: results.length,
+      blockedCount: results.filter((r) => r.verdict === "BLOCK").length,
+      reviewCount: results.filter((r) => r.verdict === "REVIEW").length,
+      allowCount: results.filter((r) => r.verdict === "ALLOW").length,
+      results
+    };
+    return { content: [{ type: "text", text: JSON.stringify(summary, null, 2) }] };
   }
 
   if (toolName === "estimate_gas") {

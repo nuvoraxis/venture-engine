@@ -11,9 +11,9 @@
 ## Products
 
 ### 1. AegisGate — EVM Wallet AML, Sanctions & Contract Risk API
-- Endpoints: GET /v1/screen?address=0x...&chain=base ($0.01 USDC / 10000 units)
-- Features: OFAC/mixer check, live balance/nonce/bytecode inspection, EIP-1967 upgradeable proxy slot detection
-- MCP Tool: screen_evm_address
+- Endpoints: GET /v1/screen?address=0x...&chain=base ($0.01 USDC / 10000 units), POST /aegis/v1/screen/batch ($0.05 USDC / up to 20 addresses), GET /v1/badge?address=0x...&chain=base (free live SVG badge)
+- Features: OFAC/mixer check, live balance/nonce/bytecode inspection, EIP-1967 upgradeable proxy slot detection, parallel batch screening
+- MCP Tools: screen_evm_address, batch_screen_evm_addresses
 
 ### 2. GasPulse & Mempool Guard — RPC Failover, EIP-1559 Gas & Tx Simulation
 - Endpoints: GET /v1/gas ($0.01 USDC), POST /v1/simulate ($0.01 USDC), GET /v1/rpc-health (free)

@@ -209,6 +209,32 @@
       <pre id="demoOut">Click any benchmark button above to inspect live mainnet output.</pre>
     </section>
 
+    <section class="card" style="margin-bottom:1.25rem;">
+      <h2>Embeddable Live Risk Badge (<code>GET /v1/badge</code>)</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">
+        Embed real-time OFAC/AML &amp; contract risk status in your GitHub README, docs, or dApp frontend for free.
+      </p>
+      <div class="form-grid">
+        <div>
+          <label for="badgeAddr">EVM Address</label>
+          <input id="badgeAddr" value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913" />
+        </div>
+        <div>
+          <label for="badgeChain">Chain</label>
+          <select id="badgeChain">
+            <option value="base" selected>Base Mainnet</option>
+            <option value="ethereum">Ethereum Mainnet</option>
+            <option value="arbitrum">Arbitrum One</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:0.85rem;">
+        <button id="badgeBtn" type="button" style="margin-top:0;">Preview Live Badge</button>
+        <img id="badgeImg" alt="AegisGate Live Risk Badge" src="/v1/badge?address=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&chain=base" style="height:20px;" />
+      </div>
+      <pre id="badgeMd">[![AegisGate Risk](https://venture-engine-gateway.leonid-ai-global.workers.dev/v1/badge?address=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&chain=base)](https://venture-engine-gateway.leonid-ai-global.workers.dev/)</pre>
+    </section>
+
     <section class="card">
       <h2>Self-Serve KYB &amp; Base USDC Checkout (<code>POST /v1/kyb-checkout</code>)</h2>
       <p style="margin:0;color:var(--muted);font-size:0.9rem;">
@@ -278,6 +304,22 @@
         }
       });
     });
+
+    const badgeBtn = document.getElementById("badgeBtn");
+    const badgeAddr = document.getElementById("badgeAddr");
+    const badgeChain = document.getElementById("badgeChain");
+    const badgeImg = document.getElementById("badgeImg");
+    const badgeMd = document.getElementById("badgeMd");
+    if (badgeBtn) {
+      badgeBtn.addEventListener("click", () => {
+        const addr = encodeURIComponent(badgeAddr.value.trim());
+        const ch = encodeURIComponent(badgeChain.value);
+        const rel = `/v1/badge?address=${addr}&chain=${ch}`;
+        const abs = `https://venture-engine-gateway.leonid-ai-global.workers.dev${rel}`;
+        badgeImg.src = rel;
+        badgeMd.textContent = `[![AegisGate Risk](${abs})](https://venture-engine-gateway.leonid-ai-global.workers.dev/)`;
+      });
+    }
 
     const btn = document.getElementById("checkoutBtn");
     const out = document.getElementById("checkoutOut");

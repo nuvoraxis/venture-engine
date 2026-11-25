@@ -491,7 +491,7 @@ test("Remote HTTP POST /mcp allows free initialize & tools/list (all 7 tools) an
   assert.equal(listRes.status, 200);
   const listBody = await listRes.json();
   const toolNames = listBody.result.tools.map((t) => t.name);
-  assert.equal(ALL_MCP_TOOLS.length, 7);
+  assert.equal(ALL_MCP_TOOLS.length, 8);
   assert.deepEqual(toolNames, [
     "screen_evm_address",
     "estimate_gas",
@@ -499,7 +499,8 @@ test("Remote HTTP POST /mcp allows free initialize & tools/list (all 7 tools) an
     "check_rpc_health",
     "inspect_contract_invariants",
     "diff_contract_snapshots",
-    "verify_x402_payment"
+    "verify_x402_payment",
+    "batch_screen_evm_addresses"
   ]);
 
   // 3. Unauthenticated tools/call -> 402 x402 challenge
@@ -728,4 +729,67 @@ test("GET /v1/badge returns embeddable SVG risk badge and validates parameters",
     new Request("https://gateway.venture-engine.workers.dev/v1/badge?address=not-an-address")
   );
   assert.equal(badRes.status, 400);
+});
+
+test("POST /aegis/v1/screen/batch and MCP batch_screen_evm_addresses require auth and screen up to 20 addresses", async () => {
+  const handler = createGatewayHandler({
+    fetchImpl: makeSuiteRpcFetch(),
+    tokenSecret: TEST_SECRET,
+    apiKeys: new Set(["ve_test_batch_key"])
+  });
+
+  const unauthRes = await handler(
+    new Request("https://gateway.venture-engine.workers.dev/aegis/v1/screen/batch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ addresses: ["0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"] })
+    })
+  );
+  assert.equal(unauthRes.status, 402);
+
+  const authRes = await handler(
+    new Request("https://gateway.venture-engine.workers.dev/aegis/v1/screen/batch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Api-Key": "ve_test_batch_key" },
+      body: JSON.stringify({
+        chain: "ethereum",
+        addresses: [
+          "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+          "0x8589427373d6d84e98730d7795d8f6f8731fda16"
+        ]
+      })
+    })
+  );
+  assert.equal(authRes.status, 200);
+  const data = await authRes.json();
+  assert.equal(data.total, 2);
+  assert.equal(data.blockedCount, 1);
+  assert.equal(data.allowCount, 1);
+
+  const mcpRes = await handler(
+    new Request("https://gateway.venture-engine.workers.dev/mcp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Api-Key": "ve_test_batch_key" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 77,
+        method: "tools/call",
+        params: {
+          name: "batch_screen_evm_addresses",
+          arguments: {
+            chain: "ethereum",
+            addresses: [
+              "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+              "0x8589427373d6d84e98730d7795d8f6f8731fda16"
+            ]
+          }
+        }
+      })
+    })
+  );
+  assert.equal(mcpRes.status, 200);
+  const mcpJson = await mcpRes.json();
+  const parsed = JSON.parse(mcpJson.result.content[0].text);
+  assert.equal(parsed.total, 2);
+  assert.equal(parsed.blockedCount, 1);
 });

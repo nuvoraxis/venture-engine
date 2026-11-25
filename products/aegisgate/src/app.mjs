@@ -8,10 +8,12 @@ import { build402Payload, verifyBaseUsdcPayment, TREASURY_ADDRESS } from "./x402
 import openapiSpec from "../public/openapi.json" with { type: "json" };
 
 export const PRICE_PER_SCREEN_USDC_UNITS = 10000n; // $0.01 USDC (6 decimals)
+export const PRICE_PER_BATCH_USDC_UNITS = 50000n; // $0.05 USDC (up to 20 addresses)
+export const MAX_BATCH_ADDRESSES = 20;
 
 export const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, X-Api-Key, X-Payment-Tx"
 };
 
@@ -141,50 +143,96 @@ export function createAegisHandler({
         return jsonResponse(200, openapiSpec, { "Cache-Control": "public, max-age=300" });
       }
 
-      if (request.method === "GET" && url.pathname === "/v1/screen") {
-        const address = url.searchParams.get("address") || "";
-        const chain = url.searchParams.get("chain") || "base";
-
+      const authorizeRequest = async (priceUnits) => {
         const apiKey = request.headers.get("x-api-key");
         const paymentTx = request.headers.get("x-payment-tx");
         const allowedKeys = resolveAllowedApiKeys(baseKeys, context);
 
-        let authorized = false;
-        let paymentReceipt = null;
-
         if (typeof apiKey === "string" && apiKey.length > 0 && allowedKeys.has(apiKey)) {
-          authorized = true;
-        } else if (typeof paymentTx === "string") {
+          return { ok: true, paymentReceipt: null };
+        }
+        if (typeof paymentTx === "string") {
           const verification = await verifyBaseUsdcPayment(
             paymentTx,
-            PRICE_PER_SCREEN_USDC_UNITS,
+            priceUnits,
             activeConsumedTx,
             activeFetch
           );
           if (!verification.ok) {
-            return jsonResponse(
-              402,
-              {
-                ...build402Payload(PRICE_PER_SCREEN_USDC_UNITS, url.pathname),
-                paymentError: verification.reason
-              },
-              { "Cache-Control": "no-store" }
-            );
+            return {
+              ok: false,
+              response: jsonResponse(
+                402,
+                {
+                  ...build402Payload(priceUnits, url.pathname),
+                  paymentError: verification.reason
+                },
+                { "Cache-Control": "no-store" }
+              )
+            };
           }
-          authorized = true;
-          paymentReceipt = verification;
+          return { ok: true, paymentReceipt: verification };
         }
-
-        if (!authorized) {
-          return jsonResponse(
+        return {
+          ok: false,
+          response: jsonResponse(
             402,
-            build402Payload(PRICE_PER_SCREEN_USDC_UNITS, url.pathname),
+            build402Payload(priceUnits, url.pathname),
             { "Cache-Control": "no-store" }
-          );
-        }
+          )
+        };
+      };
+
+      if (request.method === "GET" && url.pathname === "/v1/screen") {
+        const address = url.searchParams.get("address") || "";
+        const chain = url.searchParams.get("chain") || "base";
+
+        const auth = await authorizeRequest(PRICE_PER_SCREEN_USDC_UNITS);
+        if (!auth.ok) return auth.response;
 
         const report = await screenEvmAddress(address, chain, activeFetch);
-        return jsonResponse(200, { report, paymentReceipt }, { "Cache-Control": "no-store" });
+        return jsonResponse(200, { report, paymentReceipt: auth.paymentReceipt }, { "Cache-Control": "no-store" });
+      }
+
+      if (request.method === "POST" && url.pathname === "/v1/screen/batch") {
+        const auth = await authorizeRequest(PRICE_PER_BATCH_USDC_UNITS);
+        if (!auth.ok) return auth.response;
+
+        let body;
+        try {
+          body = await request.json();
+        } catch {
+          return jsonResponse(400, { error: "Invalid JSON body" });
+        }
+
+        const addresses = Array.isArray(body?.addresses) ? body.addresses : null;
+        const chain = typeof body?.chain === "string" && body.chain.trim() ? body.chain.trim().toLowerCase() : "base";
+        if (!addresses || addresses.length === 0 || addresses.length > MAX_BATCH_ADDRESSES) {
+          return jsonResponse(400, {
+            error: `addresses must be a non-empty array of 1 to ${MAX_BATCH_ADDRESSES} EVM addresses`
+          });
+        }
+
+        const results = await Promise.all(
+          addresses.map((addr) => screenEvmAddress(String(addr || ""), chain, activeFetch))
+        );
+        const blockedCount = results.filter((r) => r.verdict === "BLOCK").length;
+        const reviewCount = results.filter((r) => r.verdict === "REVIEW").length;
+        const allowCount = results.filter((r) => r.verdict === "ALLOW").length;
+
+        return jsonResponse(
+          200,
+          {
+            chain,
+            total: results.length,
+            blockedCount,
+            reviewCount,
+            allowCount,
+            results,
+            paymentReceipt: auth.paymentReceipt
+          },
+          { "Cache-Control": "no-store" }
+        );
       }
 
       if (request.method === "GET") {
