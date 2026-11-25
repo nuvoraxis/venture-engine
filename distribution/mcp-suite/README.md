@@ -8,7 +8,7 @@ Connect **AegisGate**, **GasPulse**, and **AuditPulse** to any AI agent over **l
 
 ---
 
-## 1. Remote Streamable HTTP MCP (`POST /mcp`) — Unified Gateway
+## 1. Remote Streamable HTTP MCP (`POST /mcp`) â€” Unified Gateway
 
 Deploy the unified gateway once and point any remote MCP client or autonomous agent at `POST https://<gateway-host>/mcp`:
 
@@ -20,7 +20,7 @@ Deploy the unified gateway once and point any remote MCP client or autonomous ag
   "mcpServers": {
     "evm-guard-gateway": {
       "type": "http",
-      "url": "https://venture-engine.workers.dev/mcp",
+      "url": "https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp",
       "headers": {
         "X-Api-Key": "<YOUR_STATELESS_VE_LIVE_API_KEY>"
       }
@@ -71,9 +71,9 @@ Run all three MCP servers locally via stdio (`node`):
 ## 3. Unified Gateway & Standalone x402 HTTP Routes
 
 ### Self-Serve KYB Onboarding & Instant Stateless API Key (`Portal` Mounted at Root `/`)
-- `GET /` · `GET /health` · `GET /v1/plans` · `GET /.well-known/x402.json` · `GET /llms.txt` · `GET /openapi.json`
-- `POST /v1/kyb-checkout` — Validates `{ companyName, jurisdiction, contactDomain, payerAddress, plan }` (`starter` `$49` / `growth` `$199` / `enterprise` `$499` Base USDC) fail-closed and issues deterministic `invoiceId` (`inv_...`). Supplying `txHash` verifies Base USDC payment and returns `apiKey` (`ve_live_...`).
-- `POST /v1/verify-invoice` — Verifies Base USDC `txHash` for an issued `invoiceId` (or stateless `plan`) and returns an instant stateless `ve_live_...` `X-Api-Key` accepted across `/aegis/*`, `/gaspulse/*`, `/auditpulse/*`, and `POST /mcp`.
+- `GET /` Â· `GET /health` Â· `GET /v1/plans` Â· `GET /.well-known/x402.json` Â· `GET /llms.txt` Â· `GET /openapi.json`
+- `POST /v1/kyb-checkout` â€” Validates `{ companyName, jurisdiction, contactDomain, payerAddress, plan }` (`starter` `$49` / `growth` `$199` / `enterprise` `$499` Base USDC) fail-closed and issues deterministic `invoiceId` (`inv_...`). Supplying `txHash` verifies Base USDC payment and returns `apiKey` (`ve_live_...`).
+- `POST /v1/verify-invoice` â€” Verifies Base USDC `txHash` for an issued `invoiceId` (or stateless `plan`) and returns an instant stateless `ve_live_...` `X-Api-Key` accepted across `/aegis/*`, `/gaspulse/*`, `/auditpulse/*`, and `POST /mcp`.
 
 ### Downstream Service Routes
 
@@ -88,6 +88,6 @@ All paid HTTP routes and `POST /mcp` `tools/call` return `HTTP 402` with an `x40
 
 ## 4. Quickstart Guides
 
-- [01 — x402 Agent AML Guard (AegisGate)](../guides/01-x402-agent-aml-guard.md)
-- [02 — Pre-Flight Tx Simulation & RPC Failover (GasPulse)](../guides/02-pre-flight-tx-simulation.md)
-- [03 — Continuous DeFi Invariant Monitoring (AuditPulse)](../guides/03-continuous-defi-invariant-monitoring.md)
+- [01 â€” x402 Agent AML Guard (AegisGate)](../guides/01-x402-agent-aml-guard.md)
+- [02 â€” Pre-Flight Tx Simulation & RPC Failover (GasPulse)](../guides/02-pre-flight-tx-simulation.md)
+- [03 â€” Continuous DeFi Invariant Monitoring (AuditPulse)](../guides/03-continuous-defi-invariant-monitoring.md)

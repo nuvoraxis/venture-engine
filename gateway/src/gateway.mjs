@@ -214,7 +214,11 @@ export function createGatewayHandler({
   landingHtml = null,
   llmsTxt = null
 } = {}) {
-  const bridgeKey = generateInternalBridgeKey();
+  let bridgeKey = null;
+  function getBridgeKey() {
+    if (!bridgeKey) bridgeKey = generateInternalBridgeKey();
+    return bridgeKey;
+  }
   const baseStaticKeys = parseStaticKeySet(apiKeys);
   const bundlesByRpcKey = new Map();
 
@@ -231,7 +235,7 @@ export function createGatewayHandler({
       landingHtml,
       llmsTxt,
       rpcOverrides: activeRpcOverrides,
-      bridgeKey,
+      bridgeKey: getBridgeKey(),
       tokenSecret,
       staticKeys: baseStaticKeys
     });
@@ -283,10 +287,11 @@ export function createGatewayHandler({
               ? parseStaticKeySet(baseStaticKeys, context.apiKeys, context.env?.VE_STATIC_API_KEYS, context.env?.GASPULSE_API_KEYS)
               : parseStaticKeySet(baseStaticKeys, context.apiKeys, context.env?.VE_STATIC_API_KEYS, context.env?.AUDITPULSE_API_KEYS);
 
+        const currentBridgeKey = getBridgeKey();
         const authCheck = await authenticateApiKeyHeader(request.headers.get("x-api-key"), {
           tokenSecret: activeTokenSecret,
           staticKeys: serviceStaticKeys,
-          forbiddenKey: bridgeKey,
+          forbiddenKey: currentBridgeKey,
           nowMs: context.nowMs
         });
         if (authCheck.provided && !authCheck.ok) {
@@ -294,7 +299,7 @@ export function createGatewayHandler({
         }
 
         const downstreamReq = await cloneRequestWithPrefixStrip(request, mountPrefix, {
-          injectApiKey: authCheck.ok ? bridgeKey : null,
+          injectApiKey: authCheck.ok ? currentBridgeKey : null,
           stripApiKey: !authCheck.ok
         });
 

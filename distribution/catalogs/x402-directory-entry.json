@@ -21,7 +21,7 @@
     "statelessApiKeyPrefix": "ve_live_"
   },
   "unifiedGateway": {
-    "baseUrlTemplate": "https://venture-engine.workers.dev",
+    "baseUrlTemplate": "https://venture-engine-gateway.leonid-ai-global.workers.dev",
     "mcpHttpEndpoint": "/mcp",
     "mcpDiscoveryFreeMethods": ["initialize", "tools/list", "ping"],
     "mcpPaidMethods": ["tools/call"],
@@ -40,7 +40,7 @@
   "services": [
     {
       "id": "aegisgate",
-      "name": "AegisGate — EVM AML, Sanctions & Proxy Risk API",
+      "name": "AegisGate â€” EVM AML, Sanctions & Proxy Risk API",
       "category": "security-compliance",
       "chains": ["base", "ethereum", "arbitrum"],
       "mcpTools": ["screen_evm_address"],
@@ -58,7 +58,7 @@
     },
     {
       "id": "gaspulse",
-      "name": "GasPulse & Mempool Guard — RPC Failover & Pre-Flight Tx Simulation API",
+      "name": "GasPulse & Mempool Guard â€” RPC Failover & Pre-Flight Tx Simulation API",
       "category": "infrastructure-simulation",
       "chains": ["base", "ethereum", "arbitrum"],
       "mcpTools": ["estimate_gas", "simulate_transaction", "check_rpc_health"],
@@ -83,7 +83,7 @@
     },
     {
       "id": "auditpulse",
-      "name": "AuditPulse — Smart-Contract & Pool Invariant Monitor",
+      "name": "AuditPulse â€” Smart-Contract & Pool Invariant Monitor",
       "category": "defi-risk-monitoring",
       "chains": ["base", "ethereum", "arbitrum"],
       "mcpTools": ["inspect_contract_invariants", "diff_contract_snapshots", "verify_x402_payment"],

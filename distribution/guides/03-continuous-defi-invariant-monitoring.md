@@ -27,11 +27,11 @@ Continuously monitor smart contracts, ERC-20 tokens, Uniswap V2/V3 pools, and ER
 
 ```bash
 # Inspect an ERC-20 / pool contract via Gateway ($0.02 Base USDC x402 or stateless ve_live_... X-Api-Key)
-curl -s "https://venture-engine.workers.dev/auditpulse/v1/inspect?address=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&chain=base" \
+curl -s "https://venture-engine-gateway.leonid-ai-global.workers.dev/auditpulse/v1/inspect?address=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&chain=base" \
   -H "X-Payment-Tx: 0x<CONFIRMED_BASE_USDC_TX_HASH>"
 
 # Compute live diff against baseline snapshot and format Slack alert ($0.01 Base USDC or X-Api-Key)
-curl -s -X POST "https://venture-engine.workers.dev/auditpulse/v1/diff" \
+curl -s -X POST "https://venture-engine-gateway.leonid-ai-global.workers.dev/auditpulse/v1/diff" \
   -H "Content-Type: application/json" \
   -H "X-Api-Key: <YOUR_STATELESS_VE_LIVE_API_KEY>" \
   -d '{
@@ -46,7 +46,7 @@ curl -s -X POST "https://venture-engine.workers.dev/auditpulse/v1/diff" \
   }'
 
 # Or call remote Streamable HTTP MCP (POST /mcp) with inspect_contract_invariants
-curl -s -X POST "https://venture-engine.workers.dev/mcp" \
+curl -s -X POST "https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp" \
   -H "Content-Type: application/json" \
   -H "X-Api-Key: <YOUR_STATELESS_VE_LIVE_API_KEY>" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"inspect_contract_invariants","arguments":{"address":"0x833589fcd6edb6e08f4c7c32d4f71b54bda02913","chain":"base"}}}'
@@ -55,7 +55,7 @@ curl -s -X POST "https://venture-engine.workers.dev/mcp" \
 ## 2. Node.js (`fetch`, Zero Dependencies)
 
 ```js
-const GATEWAY_URL = "https://venture-engine.workers.dev";
+const GATEWAY_URL = "https://venture-engine-gateway.leonid-ai-global.workers.dev";
 const targetContract = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
 
 const inspectRes = await fetch(
@@ -79,7 +79,7 @@ import json
 import os
 import urllib.request
 
-url = "https://venture-engine.workers.dev/auditpulse/v1/inspect?address=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&chain=base"
+url = "https://venture-engine-gateway.leonid-ai-global.workers.dev/auditpulse/v1/inspect?address=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&chain=base"
 req = urllib.request.Request(url, headers={"X-Api-Key": os.environ.get("VE_API_KEY", "")})
 
 with urllib.request.urlopen(req, timeout=15) as resp:

@@ -26,14 +26,14 @@ Eliminate reverted transactions, gas overpays, and single-RPC outages in trading
 
 ```bash
 # Public multi-chain RPC latency & circuit-breaker snapshot via Gateway
-curl -s "https://venture-engine.workers.dev/gaspulse/v1/rpc-health?probe=true&chain=base"
+curl -s "https://venture-engine-gateway.leonid-ai-global.workers.dev/gaspulse/v1/rpc-health?probe=true&chain=base"
 
 # Paid EIP-1559 gas estimator (returns HTTP 402 without X-Api-Key or X-Payment-Tx)
-curl -s "https://venture-engine.workers.dev/gaspulse/v1/gas?chain=base" \
+curl -s "https://venture-engine-gateway.leonid-ai-global.workers.dev/gaspulse/v1/gas?chain=base" \
   -H "X-Payment-Tx: 0x<CONFIRMED_BASE_USDC_TX_HASH>"
 
 # Paid pre-flight eth_call + eth_estimateGas + Mempool Guard check using stateless ve_live_... key
-curl -s -X POST "https://venture-engine.workers.dev/gaspulse/v1/simulate" \
+curl -s -X POST "https://venture-engine-gateway.leonid-ai-global.workers.dev/gaspulse/v1/simulate" \
   -H "Content-Type: application/json" \
   -H "X-Api-Key: <YOUR_STATELESS_VE_LIVE_API_KEY>" \
   -d '{
@@ -45,7 +45,7 @@ curl -s -X POST "https://venture-engine.workers.dev/gaspulse/v1/simulate" \
   }'
 
 # Or call remote Streamable HTTP MCP (POST /mcp) with estimate_gas / simulate_transaction
-curl -s -X POST "https://venture-engine.workers.dev/mcp" \
+curl -s -X POST "https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp" \
   -H "Content-Type: application/json" \
   -H "X-Api-Key: <YOUR_STATELESS_VE_LIVE_API_KEY>" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"estimate_gas","arguments":{"chain":"base"}}}'
@@ -54,7 +54,7 @@ curl -s -X POST "https://venture-engine.workers.dev/mcp" \
 ## 2. Node.js (`fetch`, Zero Dependencies)
 
 ```js
-const GATEWAY_URL = "https://venture-engine.workers.dev";
+const GATEWAY_URL = "https://venture-engine-gateway.leonid-ai-global.workers.dev";
 
 const resp = await fetch(`${GATEWAY_URL}/gaspulse/v1/simulate`, {
   method: "POST",
@@ -99,7 +99,7 @@ payload = json.dumps({
 }).encode("utf-8")
 
 req = urllib.request.Request(
-    "https://venture-engine.workers.dev/gaspulse/v1/simulate",
+    "https://venture-engine-gateway.leonid-ai-global.workers.dev/gaspulse/v1/simulate",
     data=payload,
     headers={
         "Content-Type": "application/json",

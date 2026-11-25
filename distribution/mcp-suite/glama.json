@@ -9,7 +9,7 @@
   "transports": ["stdio", "http"],
   "chains": ["base", "ethereum", "arbitrum"],
   "remoteGateway": {
-    "baseUrlTemplate": "https://venture-engine.workers.dev",
+    "baseUrlTemplate": "https://venture-engine-gateway.leonid-ai-global.workers.dev",
     "mcpEndpoint": "/mcp",
     "kybCheckoutEndpoint": "/v1/kyb-checkout",
     "verifyInvoiceEndpoint": "/v1/verify-invoice",

@@ -16,7 +16,7 @@
       "description": "Current deployment origin"
     },
     {
-      "url": "https://portal.venture-engine.workers.dev",
+      "url": "https://venture-engine-gateway.leonid-ai-global.workers.dev",
       "description": "Cloudflare Workers edge deployment template"
     }
   ],

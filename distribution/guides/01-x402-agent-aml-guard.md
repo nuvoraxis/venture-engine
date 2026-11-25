@@ -25,10 +25,10 @@ Prevent AI agents and Web3 payment flows from interacting with OFAC-sanctioned a
 
 ```bash
 # Step 1a: Unauthenticated gateway call returns HTTP 402 with Base Mainnet USDC terms
-curl -i "https://venture-engine.workers.dev/aegis/v1/screen?address=0x2222222222222222222222222222222222222222&chain=base"
+curl -i "https://venture-engine-gateway.leonid-ai-global.workers.dev/aegis/v1/screen?address=0x2222222222222222222222222222222222222222&chain=base"
 
 # Step 1b: Or self-serve onboard via Fail-Closed KYB -> instant stateless X-Api-Key (ve_live_...)
-curl -s -X POST "https://venture-engine.workers.dev/v1/kyb-checkout" \
+curl -s -X POST "https://venture-engine-gateway.leonid-ai-global.workers.dev/v1/kyb-checkout" \
   -H "Content-Type: application/json" \
   -d '{
     "companyName": "Acme Trading Labs Ltd",
@@ -39,16 +39,16 @@ curl -s -X POST "https://venture-engine.workers.dev/v1/kyb-checkout" \
   }'
 
 # Verify Base USDC settlement txHash to receive stateless apiKey ("ve_live_...")
-curl -s -X POST "https://venture-engine.workers.dev/v1/verify-invoice" \
+curl -s -X POST "https://venture-engine-gateway.leonid-ai-global.workers.dev/v1/verify-invoice" \
   -H "Content-Type: application/json" \
   -d '{"invoiceId":"inv_<INVOICE_ID>","txHash":"0x<CONFIRMED_BASE_USDC_TX_HASH>"}'
 
 # Step 2a: Screen via Unified Gateway using X-Payment-Tx (x402 pay-per-call)
-curl -s "https://venture-engine.workers.dev/aegis/v1/screen?address=0x2222222222222222222222222222222222222222&chain=base" \
+curl -s "https://venture-engine-gateway.leonid-ai-global.workers.dev/aegis/v1/screen?address=0x2222222222222222222222222222222222222222&chain=base" \
   -H "X-Payment-Tx: 0x<CONFIRMED_BASE_USDC_TX_HASH>"
 
 # Step 2b: Or call remote HTTP MCP (POST /mcp) with your stateless ve_live_... X-Api-Key
-curl -s -X POST "https://venture-engine.workers.dev/mcp" \
+curl -s -X POST "https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp" \
   -H "Content-Type: application/json" \
   -H "X-Api-Key: <YOUR_STATELESS_VE_LIVE_API_KEY>" \
   -d '{
@@ -65,7 +65,7 @@ curl -s -X POST "https://venture-engine.workers.dev/mcp" \
 ## 2. Node.js (`fetch`, Zero Dependencies)
 
 ```js
-const GATEWAY_URL = "https://venture-engine.workers.dev";
+const GATEWAY_URL = "https://venture-engine-gateway.leonid-ai-global.workers.dev";
 const target = "0x2222222222222222222222222222222222222222";
 
 const res = await fetch(`${GATEWAY_URL}/aegis/v1/screen?address=${target}&chain=base`, {
@@ -96,7 +96,7 @@ import os
 import urllib.error
 import urllib.request
 
-url = "https://venture-engine.workers.dev/aegis/v1/screen?address=0x2222222222222222222222222222222222222222&chain=base"
+url = "https://venture-engine-gateway.leonid-ai-global.workers.dev/aegis/v1/screen?address=0x2222222222222222222222222222222222222222&chain=base"
 req = urllib.request.Request(url, headers={"X-Api-Key": os.environ.get("VE_API_KEY", "")})
 
 try:

@@ -1,4 +1,16 @@
-# Venture Engine — $1M/mo Autonomous B2B FinTech & Risk/Data Program
+# Venture Engine — Autonomous EVM Risk, Gas & Invariant Suite (x402 + MCP)
+
+**Live Production Edge Gateway:** `https://venture-engine-gateway.leonid-ai-global.workers.dev`  
+**Remote Streamable HTTP MCP:** `POST https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp` (7 tools; free `initialize` & `tools/list`)  
+**Discovery & Self-Serve KYB Onboarding:** `/.well-known/x402.json` · `/llms.txt` · `/openapi.json` · `/v1/plans` · `POST /v1/kyb-checkout`  
+**Receive-Only Base Mainnet USDC Treasury:** `0x703d3948cc102bf4bc0ef93ef330f56be2afd69c`
+
+## Live API Routes
+- **AegisGate (EVM AML, Sanctions & Proxy Risk):** `GET /aegis/v1/screen?address=0x...&chain=base|ethereum|arbitrum` (`$0.01 USDC` x402 or `X-Api-Key`)
+- **GasPulse (RPC Failover, EIP-1559 Gas & Tx Simulation):** `GET /gaspulse/v1/gas`, `POST /gaspulse/v1/simulate`, `GET /gaspulse/v1/rpc-health`
+- **AuditPulse (Contract Bytecode & DEX/Vault Invariant Monitor):** `GET /auditpulse/v1/inspect`, `POST /auditpulse/v1/diff`
+
+---
 
 **Start Date:** 2026-11-25  
 **North-Star Target:** $1,000,000 / month net profit  
