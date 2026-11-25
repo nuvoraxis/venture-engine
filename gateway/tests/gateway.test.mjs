@@ -613,6 +613,12 @@ test("Default worker export + gateway manifests preserve zero node:* imports in 
   assert.equal(healthRes.status, 200);
   assert.equal((await healthRes.json()).treasury, TREASURY_ADDRESS);
 
+  const glamaRes = await worker.fetch(new Request("https://gateway.venture-engine.workers.dev/mcp/.well-known/glama.json"));
+  assert.equal(glamaRes.status, 200);
+  const glamaJson = await glamaRes.json();
+  assert.equal(glamaJson.$schema, "https://glama.ai/mcp/schemas/connector.json");
+  assert.equal(glamaJson.claim, "glama_claim_WbbIub2MjCct5cGsxJaj9aU4wQvRU3lL");
+
   const edgeModules = ["src/auth_tokens.mjs", "src/mcp_http.mjs", "src/gateway.mjs", "src/worker.mjs"];
   for (const rel of edgeModules) {
     const content = readGatewayFile(rel);

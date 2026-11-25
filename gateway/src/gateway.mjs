@@ -256,6 +256,26 @@ export function createGatewayHandler({
       }
 
       const url = new URL(request.url);
+      if (request.method === "GET" && (url.pathname === "/mcp/.well-known/glama.json" || url.pathname === "/.well-known/glama.json")) {
+        return new Response(
+          JSON.stringify(
+            {
+              $schema: "https://glama.ai/mcp/schemas/connector.json",
+              claim: "glama_claim_WbbIub2MjCct5cGsxJaj9aU4wQvRU3lL"
+            },
+            null,
+            2
+          ),
+          {
+            status: 200,
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              ...GATEWAY_CORS_HEADERS
+            }
+          }
+        );
+      }
+
       const activeFetch = context.fetchImpl || fetchImpl;
       const activeTokenSecret = context.tokenSecret || context.env?.VE_TOKEN_SECRET || tokenSecret;
       const activeRpcOverrides = buildRpcOverrides(rpcOverrides, context.env);
