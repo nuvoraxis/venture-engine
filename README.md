@@ -1,5 +1,7 @@
 # Venture Engine — Autonomous EVM Risk, Gas & Invariant Suite (x402 + MCP)
 
+[![Venture Engine EVM Guard MCP connector](https://glama.ai/mcp/connectors/dev.workers.leonid-ai-global.venture-engine-gateway/venture-engine-evm-guard/badges/score.svg)](https://glama.ai/mcp/connectors/dev.workers.leonid-ai-global.venture-engine-gateway/venture-engine-evm-guard)
+
 **Live Production Edge Gateway:** `https://venture-engine-gateway.leonid-ai-global.workers.dev`  
 **Remote Streamable HTTP MCP:** `POST https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp` (7 tools; free `initialize` & `tools/list`)  
 **Discovery & Self-Serve KYB Onboarding:** `/.well-known/x402.json` · `/llms.txt` · `/openapi.json` · `/v1/plans` · `POST /v1/kyb-checkout`  
