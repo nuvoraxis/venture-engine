@@ -21,7 +21,7 @@
 
 | Week Ending | Phase | Operational Focus & Conversion KPIs | Target MRR Run-Rate | Verified Realized Cash | Status |
 |---|---|---|---|---|---|
-| **2026-11-29** | Launch | Deploy 4 Workers (AegisGate, GasPulse, AuditPulse, Portal); submit MCP/x402 catalogs | `$0` (infra live) | `$0.00` | In Progress |
+| **2026-11-29** | Launch | Unified Gateway live (`https://venture-engine-gateway.leonid-ai-global.workers.dev`), GitHub repo & root `glama.json`/`smithery.yaml` pushed (`https://github.com/nuvoraxis/venture-engine`); claim Glama/Smithery listings & submit `awesome-remote-mcp-servers` PR | `$0` (infra live) | `$0.00` | In Progress |
 | **2026-12-06** | Traction | Publish 3 technical guides; validate first paid x402 Base USDC calls | `$300` | `$0.00` | Pending |
 | **2026-12-13** | Traction | First 3–5 self-serve B2B KYB checkouts (`$49–$199/mo`) | `$1,000` | `$0.00` | Pending |
 | **2026-12-20** | Growth | Expand agent framework integrations (`llms.txt`, Smithery, Glama) | `$2,200` | `$0.00` | Pending |
