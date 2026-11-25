@@ -1,0 +1,43 @@
+# Venture Engine — Complete AI Agent & Developer Integration Guide
+
+> Single-URL Edge Gateway: `https://venture-engine-gateway.leonid-ai-global.workers.dev`
+> Receive-Only Base Mainnet USDC Treasury: `0x703d3948cc102bf4bc0ef93ef330f56be2afd69c`
+
+## 1. Remote Streamable HTTP MCP (Zero-Config Discovery)
+Add to Cursor, Claude Desktop, or any Streamable HTTP MCP client:
+- URL: `https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp`
+- `initialize` and `tools/list` are free (`🔓 none`).
+- `tools/call` accepts `X-Api-Key: ve_live_...` or `X-Payment-Tx: 0x...` (Base Mainnet USDC).
+
+## 2. Live No-Auth Demo Endpoints (1-Click Sandbox)
+- `GET /v1/demo?check=aegis` — Live OFAC/Tornado Cash screening on Ethereum
+- `GET /v1/demo?check=gaspulse` — Live Base Mainnet EIP-1559 fee estimation
+- `GET /v1/demo?check=auditpulse` — Live Base USDC contract & EIP-1967 proxy inspection
+- `GET /v1/badge?address=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&chain=base` — Embeddable live SVG risk badge
+
+## 3. Zero-Dependency SDKs
+- **JavaScript / TypeScript:** `sdk/js` (`@nuvoraxis/venture-engine-sdk`)
+  ```js
+  import { VentureEngineClient } from "@nuvoraxis/venture-engine-sdk";
+  const ve = new VentureEngineClient({ apiKey: process.env.VE_API_KEY });
+  const risk = await ve.screenAddress("0x833589fcd6edb6e08f4c7c32d4f71b54bda02913", "base");
+  ```
+- **Python:** `sdk/python` (`venture-engine-sdk`)
+  ```python
+  from venture_engine_sdk import VentureEngineClient
+  ve = VentureEngineClient(api_key=os.environ["VE_API_KEY"])
+  risk = ve.screen_address("0x833589fcd6edb6e08f4c7c32d4f71b54bda02913", chain="base")
+  ```
+
+## 4. GitHub Action (CI/CD Risk Gate)
+```yaml
+- uses: nuvoraxis/venture-engine/github-action@main
+  with:
+    address: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
+    chain: "base"
+```
+
+## 5. Self-Serve KYB Monthly B2B Plans (Instant `ve_live_...` Key Issuance)
+1. `POST /v1/kyb-checkout` with `{ companyName, jurisdiction, contactDomain, payerAddress, plan: "starter" | "growth" | "enterprise" }`
+2. Send Base Mainnet USDC (`49` / `199` / `499` USDC) from `payerAddress` to `0x703d3948cc102bf4bc0ef93ef330f56be2afd69c`.
+3. `POST /v1/verify-invoice` with `{ invoiceId, txHash }` to receive an instant `ve_live_...` API key.

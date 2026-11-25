@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://venture-engine-gateway.leonid-ai-global.workers.dev/sitemap.xml

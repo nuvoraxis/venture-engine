@@ -1,0 +1,16 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.nuvoraxis/venture-engine",
+  "description": "EVM AML/OFAC screening, multi-chain gas/tx simulation, and DeFi invariant monitoring over Base USDC x402.",
+  "repository": {
+    "url": "https://github.com/nuvoraxis/venture-engine",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp"
+    }
+  ]
+}

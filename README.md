@@ -1,10 +1,14 @@
 # Venture Engine — Autonomous EVM Risk, Gas & Invariant Suite (x402 + MCP)
 
+[![Venture Engine CI](https://github.com/nuvoraxis/venture-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/nuvoraxis/venture-engine/actions/workflows/ci.yml)
 [![Venture Engine EVM Guard MCP connector](https://glama.ai/mcp/connectors/dev.workers.leonid-ai-global.venture-engine-gateway/venture-engine-evm-guard/badges/score.svg)](https://glama.ai/mcp/connectors/dev.workers.leonid-ai-global.venture-engine-gateway/venture-engine-evm-guard)
+[![Base USDC Live Risk Badge](https://venture-engine-gateway.leonid-ai-global.workers.dev/v1/badge?address=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&chain=base)](https://venture-engine-gateway.leonid-ai-global.workers.dev/)
 
 **Live Production Edge Gateway:** `https://venture-engine-gateway.leonid-ai-global.workers.dev`  
 **Remote Streamable HTTP MCP:** `POST https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp` (7 tools; free `initialize` & `tools/list`)  
-**Discovery & Self-Serve KYB Onboarding:** `/.well-known/x402.json` · `/llms.txt` · `/openapi.json` · `/v1/plans` · `POST /v1/kyb-checkout`  
+**Discovery & Self-Serve KYB Onboarding:** `/.well-known/x402.json` · `/.well-known/mcp.json` · `/llms.txt` · `/llms-full.txt` · `/openapi.json` · `/v1/plans` · `POST /v1/kyb-checkout`  
+**Embeddable Live Risk Badge:** `GET /v1/badge?address=0x...&chain=base|ethereum|arbitrum`  
+**SDKs & CI/CD:** `sdk/js` (`@nuvoraxis/venture-engine-sdk`) · `sdk/python` (`venture-engine-sdk`) · `uses: nuvoraxis/venture-engine/github-action@main`  
 **Receive-Only Base Mainnet USDC Treasury:** `0x703d3948cc102bf4bc0ef93ef330f56be2afd69c`
 
 ## Live API Routes

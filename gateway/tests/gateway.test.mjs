@@ -700,3 +700,32 @@ test("Default worker export + gateway manifests preserve zero node:* imports in 
     assert.equal(signingPattern.test(content), false, `Signing call pattern found in ${rel}`);
   }
 });
+
+test("GET /v1/badge returns embeddable SVG risk badge and validates parameters", async () => {
+  const handler = createGatewayHandler({
+    fetchImpl: makeSuiteRpcFetch(),
+    tokenSecret: TEST_SECRET
+  });
+
+  const okRes = await handler(
+    new Request("https://gateway.venture-engine.workers.dev/v1/badge?address=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&chain=base")
+  );
+  assert.equal(okRes.status, 200);
+  assert.match(okRes.headers.get("content-type") || "", /image\/svg\+xml/);
+  const svg = await okRes.text();
+  assert.ok(svg.includes("<svg"));
+  assert.ok(svg.includes("AegisGate (base)"));
+  assert.ok(svg.includes("ALLOW (0/100)"));
+
+  const ofacRes = await handler(
+    new Request("https://gateway.venture-engine.workers.dev/v1/badge?address=0x8589427373d6d84e98730d7795d8f6f8731fda16&chain=ethereum")
+  );
+  assert.equal(ofacRes.status, 200);
+  const ofacSvg = await ofacRes.text();
+  assert.ok(ofacSvg.includes("BLOCK (100/100)"));
+
+  const badRes = await handler(
+    new Request("https://gateway.venture-engine.workers.dev/v1/badge?address=not-an-address")
+  );
+  assert.equal(badRes.status, 400);
+});

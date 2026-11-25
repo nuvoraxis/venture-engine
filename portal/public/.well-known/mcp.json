@@ -1,0 +1,25 @@
+{
+  "name": "venture-engine-evm-guard",
+  "title": "Venture Engine EVM Guard",
+  "description": "Autonomous EVM AML/OFAC screening, EIP-1559 gas/tx simulation, and DeFi/ERC-20 invariant monitoring across Base, Ethereum, and Arbitrum.",
+  "version": "1.0.0",
+  "transport": {
+    "type": "streamable-http",
+    "url": "https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp"
+  },
+  "authentication": {
+    "type": "none_for_discovery",
+    "execution": ["x402_base_usdc", "x-api-key"]
+  },
+  "repository": "https://github.com/nuvoraxis/venture-engine",
+  "homepage": "https://venture-engine-gateway.leonid-ai-global.workers.dev",
+  "tools": [
+    "aegis_screen_address",
+    "gaspulse_estimate_gas",
+    "gaspulse_simulate_tx",
+    "gaspulse_rpc_health",
+    "auditpulse_inspect_contract",
+    "auditpulse_diff_snapshot",
+    "venture_engine_x402_info"
+  ]
+}

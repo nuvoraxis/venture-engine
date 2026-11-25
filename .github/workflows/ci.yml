@@ -1,0 +1,33 @@
+name: Venture Engine CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run all Node.js test suites
+        run: |
+          node --test products/aegisgate/tests/*.test.mjs
+          node --test products/gaspulse/tests/*.test.mjs
+          node --test products/auditpulse/tests/*.test.mjs
+          node --test portal/tests/*.test.mjs
+          node --test distribution/tests/*.test.mjs
+          node --test gateway/tests/*.test.mjs
+          node --test sdk/js/tests/*.test.mjs
+          node --test github-action/tests/*.test.mjs
+      - name: Run Python SDK tests
+        run: |
+          cd sdk/python
+          python -B -m unittest discover -s tests -v

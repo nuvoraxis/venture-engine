@@ -336,6 +336,38 @@ export function createGatewayHandler({
         );
       }
 
+      if (url.pathname === "/v1/badge") {
+        if (request.method !== "GET") {
+          return jsonError(405, "METHOD_NOT_ALLOWED", "Use GET /v1/badge?address=0x...&chain=base|ethereum|arbitrum");
+        }
+        const address = (url.searchParams.get("address") || "").trim();
+        const chain = (url.searchParams.get("chain") || "base").trim().toLowerCase();
+        if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
+          return jsonError(400, "INVALID_ADDRESS", "Query parameter address must be a 20-byte 0x hex EVM address");
+        }
+        if (!["base", "ethereum", "arbitrum"].includes(chain)) {
+          return jsonError(400, "UNSUPPORTED_CHAIN", "Allowed chains: base, ethereum, arbitrum");
+        }
+        const screen = await screenEvmAddress(address, chain, bundle.aegisFetch);
+        const verdict = screen.verdict || "ALLOW";
+        const score = Number.isFinite(screen.riskScore) ? screen.riskScore : 0;
+        const color = verdict === "BLOCK" ? "#ef4444" : verdict === "REVIEW" ? "#f59e0b" : "#10b981";
+        const labelText = `AegisGate (${chain})`;
+        const valueText = `${verdict} (${score}/100)`;
+        const leftW = labelText.length * 7 + 16;
+        const rightW = valueText.length * 7 + 16;
+        const totalW = leftW + rightW;
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="20" role="img" aria-label="${labelText}: ${valueText}"><linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient><clipPath id="r"><rect width="${totalW}" height="20" rx="3" fill="#fff"/></clipPath><g clip-path="url(#r)"><rect width="${leftW}" height="20" fill="#1e293b"/><rect x="${leftW}" width="${rightW}" height="20" fill="${color}"/><rect width="${totalW}" height="20" fill="url(#s)"/></g><g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11"><text x="${leftW / 2}" y="14">${labelText}</text><text x="${leftW + rightW / 2}" y="14">${valueText}</text></g></svg>`;
+        return new Response(svg, {
+          status: 200,
+          headers: {
+            "Content-Type": "image/svg+xml; charset=utf-8",
+            "Cache-Control": "public, max-age=300",
+            ...GATEWAY_CORS_HEADERS
+          }
+        });
+      }
+
       if (url.pathname === "/mcp") {
         const mcpStaticKeys = parseStaticKeySet(
           baseStaticKeys,
