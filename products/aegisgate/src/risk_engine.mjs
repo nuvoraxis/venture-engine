@@ -6,8 +6,8 @@
 export const CANONICAL_CHAINS = {
   base: {
     chainId: 8453,
-    rpc: "https://mainnet.base.org",
-    rpcs: ["https://mainnet.base.org", "https://base-rpc.publicnode.com"],
+    rpc: "https://base-rpc.publicnode.com",
+    rpcs: ["https://base-rpc.publicnode.com", "https://base.drpc.org", "https://1rpc.io/base", "https://mainnet.base.org"],
     usdc: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
   },
   ethereum: {
@@ -15,7 +15,8 @@ export const CANONICAL_CHAINS = {
     rpc: "https://ethereum-rpc.publicnode.com",
     rpcs: [
       "https://ethereum-rpc.publicnode.com",
-      "https://eth.llamarpc.com",
+      "https://eth.drpc.org",
+      "https://1rpc.io/eth",
       "https://cloudflare-eth.com"
     ],
     usdc: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"

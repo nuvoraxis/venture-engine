@@ -69,7 +69,8 @@ export class RpcPool {
     maxBlockLag = 5,
     nowFn = () => Date.now()
   } = {}) {
-    this.fetchImpl = fetchImpl;
+    this.fetchImpl = (url, init) =>
+      fetchImpl === globalThis.fetch ? globalThis.fetch(url, init) : fetchImpl(url, init);
     this.timeoutMs = timeoutMs;
     this.failureThreshold = failureThreshold;
     this.cooldownMs = cooldownMs;

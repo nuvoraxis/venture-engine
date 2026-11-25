@@ -10,13 +10,33 @@
 import { createPortalHandler } from "../../portal/src/app.mjs";
 import { createBoundedInvoiceStore, createBoundedReplayStore } from "../../portal/src/kyb_gate.mjs";
 import { createAegisHandler } from "../../products/aegisgate/src/app.mjs";
+import { screenEvmAddress } from "../../products/aegisgate/src/risk_engine.mjs";
 import { createGasPulseHandler } from "../../products/gaspulse/src/app.mjs";
+import { estimateGasMetrics } from "../../products/gaspulse/src/gas_pulse.mjs";
 import { RpcPool } from "../../products/gaspulse/src/rpc_pool.mjs";
 import { createAuditPulseHandler } from "../../products/auditpulse/src/handler.mjs";
+import { inspectContractAndInvariants } from "../../products/auditpulse/src/inspector.mjs";
 import { authenticateApiKeyHeader, issueApiToken, parseStaticKeySet } from "./auth_tokens.mjs";
 import { buildChainOverrideFetch, createMcpHttpHandler, firstRpcUrl } from "./mcp_http.mjs";
 
 const MAX_FORWARD_BODY_BYTES = 512 * 1024;
+
+const DEMO_CHECKS = Object.freeze({
+  aegis: Object.freeze({
+    label: "AegisGate — Tornado Cash Router (Ethereum)",
+    address: "0x8589427373d6d84e98730d7795d8f6f8731fda16",
+    chain: "ethereum"
+  }),
+  gaspulse: Object.freeze({
+    label: "GasPulse — Live Base Mainnet EIP-1559 Fees",
+    chain: "base"
+  }),
+  auditpulse: Object.freeze({
+    label: "AuditPulse — Base Mainnet USDC Contract & Proxy Invariants",
+    address: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    chain: "base"
+  })
+});
 
 export const GATEWAY_CORS_HEADERS = Object.freeze({
   "Access-Control-Allow-Origin": "*",
@@ -142,7 +162,7 @@ function buildDownstreamBundle({
     corsHeaders: GATEWAY_CORS_HEADERS
   });
 
-  return { portalHandler, aegisHandler, aegisFetch, gasPulseHandler, auditPulseHandler, mcpHandler };
+  return { portalHandler, aegisHandler, aegisFetch, gasPulseHandler, auditPulseHandler, mcpHandler, rpcPool };
 }
 
 async function maybeAttachIssuedApiKey(portalResponse, tokenSecret, nowMs) {
@@ -276,10 +296,45 @@ export function createGatewayHandler({
         );
       }
 
-      const activeFetch = context.fetchImpl || fetchImpl;
+      const rawFetch = context.fetchImpl || fetchImpl;
+      const activeFetch =
+        rawFetch === globalThis.fetch ? (url, init) => globalThis.fetch(url, init) : rawFetch;
       const activeTokenSecret = context.tokenSecret || context.env?.VE_TOKEN_SECRET || tokenSecret;
       const activeRpcOverrides = buildRpcOverrides(rpcOverrides, context.env);
       const bundle = getBundle(activeFetch, activeRpcOverrides);
+
+      if (url.pathname === "/v1/demo") {
+        if (request.method !== "GET") {
+          return jsonError(405, "METHOD_NOT_ALLOWED", "Use GET /v1/demo?check=aegis|gaspulse|auditpulse");
+        }
+        const check = (url.searchParams.get("check") || "").trim().toLowerCase();
+        if (!Object.hasOwn(DEMO_CHECKS, check)) {
+          return jsonError(400, "INVALID_DEMO_CHECK", "Invalid demo check. Allowed values: aegis, gaspulse, auditpulse");
+        }
+        let result;
+        if (check === "aegis") {
+          result = await screenEvmAddress(DEMO_CHECKS.aegis.address, DEMO_CHECKS.aegis.chain, bundle.aegisFetch);
+        } else if (check === "gaspulse") {
+          result = await estimateGasMetrics(DEMO_CHECKS.gaspulse.chain, bundle.rpcPool);
+        } else {
+          result = await inspectContractAndInvariants(DEMO_CHECKS.auditpulse.address, {
+            chain: DEMO_CHECKS.auditpulse.chain,
+            fetchImpl: activeFetch,
+            rpcOverrides: activeRpcOverrides
+          });
+        }
+        return new Response(
+          JSON.stringify({ ok: true, demo: true, check, label: DEMO_CHECKS[check].label, result }, null, 2),
+          {
+            status: 200,
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              "Cache-Control": "no-store",
+              ...GATEWAY_CORS_HEADERS
+            }
+          }
+        );
+      }
 
       if (url.pathname === "/mcp") {
         const mcpStaticKeys = parseStaticKeySet(

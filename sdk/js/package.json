@@ -1,0 +1,28 @@
+{
+  "name": "@nuvoraxis/venture-engine-sdk",
+  "version": "0.1.0",
+  "description": "Zero-dependency Node.js >= 20 ESM client SDK for the Venture Engine Unified EVM Risk, Gas & Invariant Gateway (AegisGate, GasPulse, AuditPulse, Portal KYB, and Remote MCP).",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "venture-engine",
+    "x402",
+    "base",
+    "usdc",
+    "evm",
+    "aml",
+    "gas",
+    "simulation",
+    "mcp"
+  ],
+  "license": "MIT"
+}

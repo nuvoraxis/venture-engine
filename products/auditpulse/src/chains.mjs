@@ -6,19 +6,22 @@
 export const CANONICAL_CHAINS = {
   base: {
     chainId: 8453,
-    rpc: "https://mainnet.base.org",
+    rpc: "https://base-rpc.publicnode.com",
+    rpcs: ["https://base-rpc.publicnode.com", "https://base.drpc.org", "https://1rpc.io/base", "https://mainnet.base.org"],
     usdc: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
     weth: "0x4200000000000000000000000000000000000006"
   },
   ethereum: {
     chainId: 1,
-    rpc: "https://cloudflare-eth.com",
+    rpc: "https://ethereum-rpc.publicnode.com",
+    rpcs: ["https://ethereum-rpc.publicnode.com", "https://eth.drpc.org", "https://1rpc.io/eth", "https://cloudflare-eth.com"],
     usdc: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     weth: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
   },
   arbitrum: {
     chainId: 42161,
-    rpc: "https://arb1.arbitrum.io/rpc",
+    rpc: "https://arbitrum-one-rpc.publicnode.com",
+    rpcs: ["https://arbitrum-one-rpc.publicnode.com", "https://arb1.arbitrum.io/rpc"],
     usdc: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
     weth: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1"
   }
@@ -72,7 +75,7 @@ export function resolveChainConfig(chain = "base", rpcOverrides = {}) {
     if (!isValidHttpUrl(override)) {
       throw new Error(`Invalid RPC override URL for chain '${chain}'`);
     }
-    return { ...baseCfg, rpc: override };
+    return { ...baseCfg, rpc: override, rpcs: [override] };
   }
   return baseCfg;
 }
@@ -85,52 +88,88 @@ export class RpcUpstreamError extends Error {
   }
 }
 
+function resolveRpcCandidates(rpcUrlOrList) {
+  if (Array.isArray(rpcUrlOrList)) return rpcUrlOrList;
+  for (const cfg of Object.values(CANONICAL_CHAINS)) {
+    if (cfg.rpc === rpcUrlOrList && Array.isArray(cfg.rpcs)) {
+      return cfg.rpcs;
+    }
+  }
+  return [rpcUrlOrList];
+}
+
+function isGatewayTransportError(errorObj) {
+  if (!errorObj || typeof errorObj !== "object") return false;
+  const msg = String(errorObj.message || "");
+  return errorObj.code === -32046 || errorObj.code === -32603 || /Internal error|Cannot fulfill|rate limit|too many requests/i.test(msg);
+}
+
 /**
- * Performs a bounded JSON-RPC 2.0 request and validates the JSON response envelope.
+ * Performs a bounded JSON-RPC 2.0 request with multi-RPC failover and validates the JSON response envelope.
  */
 export async function rpcCall(rpcUrl, method, params, fetchImpl = fetch, timeoutMs = 8000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    let res;
+  const candidates = resolveRpcCandidates(rpcUrl);
+  const safeFetch = fetchImpl === globalThis.fetch ? (u, i) => globalThis.fetch(u, i) : fetchImpl;
+  let lastError = null;
+
+  for (let i = 0; i < candidates.length; i++) {
+    const target = candidates[i];
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      res = await fetchImpl(rpcUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-        signal: controller.signal
-      });
-    } catch (err) {
-      throw new RpcUpstreamError(`RPC network failure for ${method}: ${err?.message || "aborted"}`);
-    }
+      let res;
+      try {
+        res = await safeFetch(target, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+          signal: controller.signal
+        });
+      } catch (err) {
+        lastError = new RpcUpstreamError(`RPC network failure for ${method}: ${err?.message || "aborted"}`);
+        continue;
+      }
 
-    if (!res.ok) {
-      throw new RpcUpstreamError(`RPC HTTP ${res.status} for ${method}`);
-    }
+      if (!res.ok) {
+        lastError = new RpcUpstreamError(`RPC HTTP ${res.status} for ${method}`);
+        if (i < candidates.length - 1 && (res.status === 429 || res.status >= 500)) {
+          continue;
+        }
+        throw lastError;
+      }
 
-    let data;
-    try {
-      data = await res.json();
-    } catch {
-      throw new RpcUpstreamError(`RPC returned invalid JSON for ${method}`);
-    }
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        lastError = new RpcUpstreamError(`RPC returned invalid JSON for ${method}`);
+        continue;
+      }
 
-    if (!data || typeof data !== "object" || Array.isArray(data)) {
-      throw new RpcUpstreamError(`RPC returned malformed envelope for ${method}`);
-    }
+      if (!data || typeof data !== "object" || Array.isArray(data)) {
+        lastError = new RpcUpstreamError(`RPC returned malformed envelope for ${method}`);
+        continue;
+      }
 
-    if (data.error) {
-      const msg = typeof data.error?.message === "string" ? data.error.message : JSON.stringify(data.error);
-      const err = new Error(`RPC Error: ${msg}`);
-      err.rpcCode = data.error?.code;
-      err.isJsonRpcError = true;
-      throw err;
-    }
+      if (data.error) {
+        const msg = typeof data.error?.message === "string" ? data.error.message : JSON.stringify(data.error);
+        if (i < candidates.length - 1 && isGatewayTransportError(data.error)) {
+          lastError = new RpcUpstreamError(`RPC gateway error for ${method}: ${msg}`);
+          continue;
+        }
+        const err = new Error(`RPC Error: ${msg}`);
+        err.rpcCode = data.error?.code;
+        err.isJsonRpcError = true;
+        throw err;
+      }
 
-    return data.result;
-  } finally {
-    clearTimeout(timer);
+      return data.result;
+    } finally {
+      clearTimeout(timer);
+    }
   }
+
+  throw lastError || new RpcUpstreamError(`All RPC endpoints failed for ${method}`);
 }
 
 /**

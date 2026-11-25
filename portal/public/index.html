@@ -196,6 +196,19 @@
       </div>
     </section>
 
+    <section class="card" style="margin-bottom:1.25rem;">
+      <h2>1-Click Live Mainnet Sandbox (<code>GET /v1/demo</code>)</h2>
+      <p style="margin:0;color:var(--muted);font-size:0.9rem;">
+        Run rate-safe, read-only canonical mainnet benchmarks across Ethereum and Base without an API key or payment.
+      </p>
+      <div style="display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:0.4rem;">
+        <button type="button" data-demo-check="aegis">AegisGate: Tornado Cash (ETH)</button>
+        <button type="button" data-demo-check="gaspulse">GasPulse: Base EIP-1559 Fees</button>
+        <button type="button" data-demo-check="auditpulse">AuditPulse: Base USDC Proxy</button>
+      </div>
+      <pre id="demoOut">Click any benchmark button above to inspect live mainnet output.</pre>
+    </section>
+
     <section class="card">
       <h2>Self-Serve KYB &amp; Base USDC Checkout (<code>POST /v1/kyb-checkout</code>)</h2>
       <p style="margin:0;color:var(--muted);font-size:0.9rem;">
@@ -251,6 +264,21 @@
   </div>
 
   <script>
+    const demoOut = document.getElementById("demoOut");
+    document.querySelectorAll("[data-demo-check]").forEach((demoBtn) => {
+      demoBtn.addEventListener("click", async () => {
+        const check = demoBtn.getAttribute("data-demo-check");
+        demoOut.textContent = `Running live mainnet demo (${check})...`;
+        try {
+          const res = await fetch(`/v1/demo?check=${encodeURIComponent(check)}`);
+          const text = await res.text();
+          demoOut.textContent = `HTTP ${res.status}\n${text}`;
+        } catch (err) {
+          demoOut.textContent = `Demo request failed: ${err.message}`;
+        }
+      });
+    });
+
     const btn = document.getElementById("checkoutBtn");
     const out = document.getElementById("checkoutOut");
     btn.addEventListener("click", async () => {

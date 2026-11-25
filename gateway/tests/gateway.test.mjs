@@ -405,6 +405,48 @@ test("Worker respects env.ETH_RPC_URL/BASE_RPC_URL on /aegis/* and isolates ASSE
   assert.ok(calledRpcUrls.includes("https://custom-base-array.example/rpc"));
 });
 
+test("GET /v1/demo runs strictly locked canonical checks (aegis, gaspulse, auditpulse) and rejects arbitrary checks", async () => {
+  const gateway = createGatewayHandler({ fetchImpl: makeSuiteRpcFetch() });
+
+  const aegisRes = await gateway(
+    new Request("https://gateway.workers.dev/v1/demo?check=aegis&address=0x2222222222222222222222222222222222222222&chain=arbitrum")
+  );
+  assert.equal(aegisRes.status, 200);
+  const aegisBody = await aegisRes.json();
+  assert.equal(aegisBody.ok, true);
+  assert.equal(aegisBody.demo, true);
+  assert.equal(aegisBody.check, "aegis");
+  assert.equal(aegisBody.result.address, "0x8589427373d6d84e98730d7795d8f6f8731fda16");
+  assert.equal(aegisBody.result.chain, "ethereum");
+  assert.equal(aegisBody.result.verdict, "BLOCK");
+
+  const gasRes = await gateway(new Request("https://gateway.workers.dev/v1/demo?check=gaspulse"));
+  assert.equal(gasRes.status, 200);
+  const gasBody = await gasRes.json();
+  assert.equal(gasBody.ok, true);
+  assert.equal(gasBody.check, "gaspulse");
+  assert.equal(gasBody.result.chain, "base");
+
+  const auditRes = await gateway(new Request("https://gateway.workers.dev/v1/demo?check=auditpulse"));
+  assert.equal(auditRes.status, 200);
+  const auditBody = await auditRes.json();
+  assert.equal(auditBody.ok, true);
+  assert.equal(auditBody.check, "auditpulse");
+  assert.equal(auditBody.result.address, "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913");
+  assert.equal(auditBody.result.chain, "base");
+
+  const invalidRes = await gateway(new Request("https://gateway.workers.dev/v1/demo?check=custom"));
+  assert.equal(invalidRes.status, 400);
+  assert.equal((await invalidRes.json()).code, "INVALID_DEMO_CHECK");
+
+  const missingRes = await gateway(new Request("https://gateway.workers.dev/v1/demo"));
+  assert.equal(missingRes.status, 400);
+  assert.equal((await missingRes.json()).code, "INVALID_DEMO_CHECK");
+
+  const methodRes = await gateway(new Request("https://gateway.workers.dev/v1/demo?check=aegis", { method: "POST" }));
+  assert.equal(methodRes.status, 405);
+});
+
 test("Remote HTTP POST /mcp allows free initialize & tools/list (all 7 tools) and enforces X-Api-Key or X-Payment-Tx on tools/call", async () => {
   const txInspect = "0x" + "3".repeat(64);
   const txVerify = "0x" + "4".repeat(64);

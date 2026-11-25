@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "venture-engine-sdk"
+version = "0.1.0"
+description = "Zero-dependency Python 3.12 stdlib client SDK for the Venture Engine Unified EVM Risk, Gas & Invariant Gateway."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = []
+keywords = ["venture-engine", "x402", "base", "usdc", "evm", "aml", "gas", "simulation", "mcp"]
+
+[project.urls]
+Homepage = "https://github.com/nuvoraxis/venture-engine"

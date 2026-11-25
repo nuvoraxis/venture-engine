@@ -297,12 +297,15 @@ test("fails over across CANONICAL_CHAINS.rpcs on HTTP 500/429, network error, an
   assert.equal(CANONICAL_CHAINS.ethereum.rpcs[0], "https://ethereum-rpc.publicnode.com");
   assert.deepEqual(CANONICAL_CHAINS.ethereum.rpcs, [
     "https://ethereum-rpc.publicnode.com",
-    "https://eth.llamarpc.com",
+    "https://eth.drpc.org",
+    "https://1rpc.io/eth",
     "https://cloudflare-eth.com"
   ]);
   assert.deepEqual(CANONICAL_CHAINS.base.rpcs, [
-    "https://mainnet.base.org",
-    "https://base-rpc.publicnode.com"
+    "https://base-rpc.publicnode.com",
+    "https://base.drpc.org",
+    "https://1rpc.io/base",
+    "https://mainnet.base.org"
   ]);
   assert.deepEqual(CANONICAL_CHAINS.arbitrum.rpcs, [
     "https://arb1.arbitrum.io/rpc",
@@ -318,7 +321,7 @@ test("fails over across CANONICAL_CHAINS.rpcs on HTTP 500/429, network error, an
         { status: 200 }
       );
     }
-    if (url === "https://eth.llamarpc.com") {
+    if (url === "https://eth.drpc.org" || url === "https://1rpc.io/eth") {
       return new Response("upstream busy", { status: 503 });
     }
     const body = JSON.parse(init.body);
@@ -337,7 +340,7 @@ test("fails over across CANONICAL_CHAINS.rpcs on HTTP 500/429, network error, an
   assert.equal(report.nonce, 7);
   assert.equal(report.nativeBalanceWei, "512");
   assert.ok(seenUrls.includes("https://ethereum-rpc.publicnode.com"));
-  assert.ok(seenUrls.includes("https://eth.llamarpc.com"));
+  assert.ok(seenUrls.includes("https://eth.drpc.org"));
   assert.ok(seenUrls.includes("https://cloudflare-eth.com"));
 
   // Base x402 verification also fails over on HTTP 429 / network error
@@ -345,7 +348,7 @@ test("fails over across CANONICAL_CHAINS.rpcs on HTTP 500/429, network error, an
   const baseSeen = [];
   const baseFailoverFetch = async (url, init) => {
     baseSeen.push(url);
-    if (url === "https://mainnet.base.org") {
+    if (url === "https://base-rpc.publicnode.com") {
       return new Response("rate limited", { status: 429 });
     }
     const body = JSON.parse(init.body);
@@ -354,8 +357,8 @@ test("fails over across CANONICAL_CHAINS.rpcs on HTTP 500/429, network error, an
   };
   const paid = await verifyBaseUsdcPayment(txHash, 10000n, new Set(), baseFailoverFetch);
   assert.equal(paid.ok, true);
-  assert.ok(baseSeen.includes("https://mainnet.base.org"));
   assert.ok(baseSeen.includes("https://base-rpc.publicnode.com"));
+  assert.ok(baseSeen.includes("https://base.drpc.org"));
 });
 
 test("distribution manifests and docs contain valid metadata with zero PII or secrets", () => {

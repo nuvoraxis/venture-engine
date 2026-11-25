@@ -1,0 +1,51 @@
+name: "Venture Engine EVM Guard"
+description: "Screen EVM contract and wallet addresses for OFAC/sanctions, mixer exposure, and proxy risk via Venture Engine AegisGate."
+author: "nuvoraxis"
+
+inputs:
+  addresses:
+    description: "Comma- or newline-separated 0x EVM addresses to screen"
+    required: true
+  chain:
+    description: "Target EVM chain (base, ethereum, arbitrum)"
+    required: false
+    default: "base"
+  gateway-url:
+    description: "Venture Engine Gateway base URL"
+    required: false
+    default: "https://venture-engine-gateway.leonid-ai-global.workers.dev"
+  api-key:
+    description: "B2B X-Api-Key (store in GitHub Actions Secrets)"
+    required: false
+    default: ""
+  payment-tx:
+    description: "Base Mainnet USDC x402 transaction hash (X-Payment-Tx)"
+    required: false
+    default: ""
+  fail-on-verdict:
+    description: "Minimum verdict that fails the workflow (BLOCK or REVIEW)"
+    required: false
+    default: "BLOCK"
+
+outputs:
+  results-json:
+    description: "JSON array of screening results"
+    value: ${{ steps.guard.outputs.results_json }}
+  highest-verdict:
+    description: "Highest risk verdict observed (ALLOW, REVIEW, BLOCK)"
+    value: ${{ steps.guard.outputs.highest_verdict }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run Venture Engine EVM Guard
+      id: guard
+      shell: bash
+      env:
+        INPUT_ADDRESSES: ${{ inputs.addresses }}
+        INPUT_CHAIN: ${{ inputs.chain }}
+        INPUT_GATEWAY_URL: ${{ inputs.gateway-url }}
+        INPUT_API_KEY: ${{ inputs.api-key }}
+        INPUT_PAYMENT_TX: ${{ inputs.payment-tx }}
+        INPUT_FAIL_ON_VERDICT: ${{ inputs.fail-on-verdict }}
+      run: node "${{ github.action_path }}/src/guard_check.mjs"

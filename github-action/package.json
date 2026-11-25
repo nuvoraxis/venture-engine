@@ -1,0 +1,15 @@
+{
+  "name": "venture-engine-github-action",
+  "version": "0.1.0",
+  "description": "Zero-dependency CI/CD GitHub Action for pre-deploy EVM address & contract AML/risk screening via Venture Engine Gateway.",
+  "type": "module",
+  "main": "src/guard_check.mjs",
+  "scripts": {
+    "start": "node src/guard_check.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "MIT"
+}

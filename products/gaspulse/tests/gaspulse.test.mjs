@@ -561,7 +561,7 @@ test("Node HTTP server handles /health, /v1/pricing, /v1/rpc-health, 402, x402, 
     assert.equal(rpcHealthRes.status, 200);
     const rpcHealthBody = await rpcHealthRes.json();
     assert.equal(rpcHealthBody.probed, true);
-    assert.equal(rpcHealthBody.health.healthyCount, 3);
+    assert.equal(rpcHealthBody.health.healthyCount, 4);
 
     // Unauthenticated -> 402
     const r402 = await fetch(`${baseUrl}/v1/gas?chain=base`);

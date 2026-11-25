@@ -13,9 +13,10 @@ export const CANONICAL_CHAINS = Object.freeze({
     blockTimeSeconds: 2,
     usdc: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
     rpcs: Object.freeze([
-      "https://mainnet.base.org",
-      "https://base.llamarpc.com",
-      "https://base-rpc.publicnode.com"
+      "https://base-rpc.publicnode.com",
+      "https://base.drpc.org",
+      "https://1rpc.io/base",
+      "https://mainnet.base.org"
     ])
   }),
   ethereum: Object.freeze({
@@ -25,9 +26,10 @@ export const CANONICAL_CHAINS = Object.freeze({
     blockTimeSeconds: 12,
     usdc: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     rpcs: Object.freeze([
-      "https://cloudflare-eth.com",
       "https://ethereum-rpc.publicnode.com",
-      "https://eth.llamarpc.com"
+      "https://eth.drpc.org",
+      "https://1rpc.io/eth",
+      "https://cloudflare-eth.com"
     ])
   }),
   arbitrum: Object.freeze({
