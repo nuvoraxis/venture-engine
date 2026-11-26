@@ -281,7 +281,7 @@ export function createGatewayHandler({
           JSON.stringify(
             {
               $schema: "https://glama.ai/mcp/schemas/connector.json",
-              claim: "glama_claim_WbbIub2MjCct5cGsxJaj9aU4wQvRU3lL"
+              claim: "glama_claim_WbbIub2HjCct5cGsxJaj9aU4wQvRU3lL"
             },
             null,
             2
