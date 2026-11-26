@@ -1,0 +1,62 @@
+name: Publish SDKs
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish_npm:
+        description: "Publish @nuvoraxis/venture-engine-sdk to npm (requires NPM_TOKEN secret)"
+        type: boolean
+        default: true
+      publish_pypi:
+        description: "Publish venture-engine-sdk to PyPI (requires PYPI_API_TOKEN secret)"
+        type: boolean
+        default: true
+
+jobs:
+  publish-npm:
+    if: ${{ inputs.publish_npm }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+      - name: Test JS SDK
+        working-directory: sdk/js
+        run: npm test
+      - name: Publish JS SDK to npm
+        working-directory: sdk/js
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "NPM_TOKEN secret is not configured. Skipping npm publish."
+            exit 1
+          fi
+          npm publish --access public
+
+  publish-pypi:
+    if: ${{ inputs.publish_pypi }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test Python SDK
+        working-directory: sdk/python
+        run: python -B -m unittest discover -s tests -v
+      - name: Build and Publish Python SDK to PyPI
+        working-directory: sdk/python
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          if [ -z "$TWINE_PASSWORD" ]; then
+            echo "PYPI_API_TOKEN secret is not configured. Skipping PyPI publish."
+            exit 1
+          fi
+          python -m pip install --upgrade build twine
+          python -m build
+          python -m twine upload dist/*
