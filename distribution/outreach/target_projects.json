@@ -1,0 +1,107 @@
+[
+    {
+        "full_name":  "internet-court/internet-court-skill",
+        "html_url":  "https://github.com/internet-court/internet-court-skill",
+        "stargazers_count":  7213,
+        "description":  "The trust layer for agent-to-agent commerce — natural-language mandates, ERC-7710 delegated permissions, x402 payments, escrow, and dispute resolution as one open, catch-all Agent Skill / Claude Code plugin.",
+        "pushed_at":  "2026-11-24T13:40:11Z"
+    },
+    {
+        "full_name":  "BlockRunAI/ClawRouter",
+        "html_url":  "https://github.com/BlockRunAI/ClawRouter",
+        "stargazers_count":  6670,
+        "description":  "The agent-native LLM router for autonomous agents. Every frontier model behind one wallet, \u003c1ms local routing, USDC payments on Base \u0026 Solana via x402.",
+        "pushed_at":  "2026-11-24T23:01:24Z"
+    },
+    {
+        "full_name":  "alsk1992/CloddsBot",
+        "html_url":  "https://github.com/alsk1992/CloddsBot",
+        "stargazers_count":  3132,
+        "description":  "Open Source AI trading agent that operates autonomously across 1000+ markets - Polymarket, Kalshi, Binance, Hyperliquid, Solana DEXs, 5 EVM chains. Scans    for edge, executes instantly, manages risk while you sleep. Agent commerce protocol for machine-to-machine payments. Self-hosted. Built on Claude.",
+        "pushed_at":  "2026-11-13T19:38:48Z"
+    },
+    {
+        "full_name":  "Bitterbot-AI/bitterbot-desktop",
+        "html_url":  "https://github.com/Bitterbot-AI/bitterbot-desktop",
+        "stargazers_count":  2483,
+        "description":  "Bitterbot - a mesh of agents that turns shared experience into collective capability.",
+        "pushed_at":  "2026-11-25T19:43:40Z"
+    },
+    {
+        "full_name":  "solana-foundation/pay",
+        "html_url":  "https://github.com/solana-foundation/pay",
+        "stargazers_count":  1810,
+        "description":  "CLI for Agentic payments (x402, MPP, AP2).",
+        "pushed_at":  "2026-11-09T23:12:40Z"
+    },
+    {
+        "full_name":  "auscaster/frantic-board",
+        "html_url":  "https://github.com/auscaster/frantic-board",
+        "stargazers_count":  1148,
+        "description":  "HELP WANTED: AI AGENTS. Real bounties, real money, every payout sealed to a public ledger. The notice board for gofrantic.com",
+        "pushed_at":  "2026-11-26T08:29:56Z"
+    },
+    {
+        "full_name":  "daydreamsai/daydreams",
+        "html_url":  "https://github.com/daydreamsai/daydreams",
+        "stargazers_count":  627,
+        "description":  "Daydreams is a set of tools for building agents for commerce",
+        "pushed_at":  "2026-10-09T00:51:38Z"
+    },
+    {
+        "full_name":  "google-agentic-commerce/a2a-x402",
+        "html_url":  "https://github.com/google-agentic-commerce/a2a-x402",
+        "stargazers_count":  573,
+        "description":  "The A2A x402 Extension brings cryptocurrency payments to the Agent-to-Agent (A2A) protocol, enabling agents to monetize their services through on-chain payments. This extension revives the spirit of HTTP 402 \"Payment Required\" for the decentralized agent ecosystem.",
+        "pushed_at":  "2026-11-11T23:03:08Z"
+    },
+    {
+        "full_name":  "qntx/bot",
+        "html_url":  "https://github.com/qntx/bot",
+        "stargazers_count":  572,
+        "description":  "Local desktop AI bot",
+        "pushed_at":  "2026-11-25T03:08:19Z"
+    },
+    {
+        "full_name":  "BlockRunAI/Franklin",
+        "html_url":  "https://github.com/BlockRunAI/Franklin",
+        "stargazers_count":  568,
+        "description":  "The AI agent with a wallet — spends USDC autonomously to get real work done. Apache-2.0, TypeScript.",
+        "pushed_at":  "2026-11-23T18:22:19Z"
+    },
+    {
+        "full_name":  "BlockRunAI/blockrun-mcp",
+        "html_url":  "https://github.com/BlockRunAI/blockrun-mcp",
+        "stargazers_count":  391,
+        "description":  "Live data for AI agents — search, research, markets, crypto, X/Twitter. Pay-per-call via x402 micropayments.",
+        "pushed_at":  "2026-11-24T23:11:42Z"
+    },
+    {
+        "full_name":  "xpaysh/awesome-x402",
+        "html_url":  "https://github.com/xpaysh/awesome-x402",
+        "stargazers_count":  307,
+        "description":  "🚀 Curated list of x402 resources: HTTP 402 Payment Required protocol for blockchain payments, crypto micropayments, AI agents, API monetization. Includes SDKs (TypeScript, Python, Rust), examples, facilitators (Coinbase, Cloudflare), MCP integration, tutorials. Accept USDC payments with one line of code. Perfect for AI agent economy.",
+        "pushed_at":  "2026-07-28T05:17:23Z"
+    },
+    {
+        "full_name":  "nirholas/three.ws",
+        "html_url":  "https://github.com/nirholas/three.ws",
+        "stargazers_count":  286,
+        "description":  "Give your AI agent a 3D body: rigged GLB avatars from text or a photo, an LLM brain, a Solana wallet, a one-tag embed.",
+        "pushed_at":  "2026-11-26T06:47:21Z"
+    },
+    {
+        "full_name":  "qntx/openai-python",
+        "html_url":  "https://github.com/qntx/openai-python",
+        "stargazers_count":  262,
+        "description":  "Drop-in OpenAI Python client with transparent x402 payment support.",
+        "pushed_at":  "2026-11-23T17:54:51Z"
+    },
+    {
+        "full_name":  "apiguru-app/amazon-scraper-v2",
+        "html_url":  "https://github.com/apiguru-app/amazon-scraper-v2",
+        "stargazers_count":  234,
+        "description":  "Agent-ready Amazon Scraper API: real-time product details (batch ASIN), offers \u0026 stock, reviews, search, best sellers, deals and seller data across 20 marketplaces. One pasted line for Claude Code / Codex / Cursor, an MCP server, or plain HTTP with 3 free calls a day and no key. Python examples inside.",
+        "pushed_at":  "2026-09-21T14:13:34Z"
+    }
+]

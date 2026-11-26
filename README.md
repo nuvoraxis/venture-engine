@@ -5,7 +5,7 @@
 [![Base USDC Live Risk Badge](https://venture-engine-gateway.leonid-ai-global.workers.dev/v1/badge?address=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&chain=base)](https://venture-engine-gateway.leonid-ai-global.workers.dev/)
 
 **Live Production Edge Gateway:** `https://venture-engine-gateway.leonid-ai-global.workers.dev`  
-**Remote Streamable HTTP MCP:** `POST https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp` (7 tools; free `initialize` & `tools/list`)  
+**Remote Streamable HTTP MCP:** `POST https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp` (8 tools; free `initialize` & `tools/list`)  
 **Discovery & Self-Serve KYB Onboarding:** `/.well-known/x402.json` · `/.well-known/mcp.json` · `/llms.txt` · `/llms-full.txt` · `/openapi.json` · `/v1/plans` · `POST /v1/kyb-checkout`  
 **Embeddable Live Risk Badge:** `GET /v1/badge?address=0x...&chain=base|ethereum|arbitrum`  
 **SDKs & CI/CD:** `sdk/js` (`@nuvoraxis/venture-engine-sdk`) · `sdk/python` (`venture-engine-sdk`) · `uses: nuvoraxis/venture-engine/github-action@main`  

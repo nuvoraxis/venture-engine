@@ -4,6 +4,9 @@
   "description": "Zero-dependency Node.js >= 20 ESM client SDK for the Venture Engine Unified EVM Risk, Gas & Invariant Gateway (AegisGate, GasPulse, AuditPulse, Portal KYB, and Remote MCP).",
   "type": "module",
   "main": "src/index.mjs",
+  "bin": {
+    "venture-engine-mcp": "./src/mcp_stdio_proxy.mjs"
+  },
   "exports": {
     ".": "./src/index.mjs"
   },
