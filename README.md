@@ -16,6 +16,21 @@
 - **GasPulse (RPC Failover, EIP-1559 Gas & Tx Simulation):** `GET /gaspulse/v1/gas`, `POST /gaspulse/v1/simulate`, `GET /gaspulse/v1/rpc-health`
 - **AuditPulse (Contract Bytecode & DEX/Vault Invariant Monitor):** `GET /auditpulse/v1/inspect`, `POST /auditpulse/v1/diff`
 
+## 30-Second Quickstart (Try Free / Pay with Base USDC x402)
+```bash
+# 1. Inspect free MCP tool catalog (Streamable HTTP, 8 tools)
+curl -sS -X POST https://venture-engine-gateway.leonid-ai-global.workers.dev/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+
+# 2. Check live Base/Ethereum/Arbitrum gas & RPC failover health (free)
+curl -sS "https://venture-engine-gateway.leonid-ai-global.workers.dev/gaspulse/v1/gas?chain=base"
+
+# 3. Run zero-dependency stdio MCP server locally
+npx -y @nuvoraxis/venture-engine-sdk
+```
+*Self-serve B2B tiers (`$99/mo` Starter, `$399/mo` Pro, `$1,500` AML + Invariant Audit Pack):* `GET /v1/plans` · `POST /v1/kyb-checkout` · `x402` per-call USDC on Base (`$0.01/call`).
+
 ---
 
 **Start Date:** 2026-11-25  

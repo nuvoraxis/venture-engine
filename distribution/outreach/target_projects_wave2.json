@@ -1,0 +1,242 @@
+[
+    {
+        "full_name":  "NoFxAiOS/nofx",
+        "stars":  13351,
+        "has_discussions":  true,
+        "language":  "Go",
+        "description":  "Your AI trading terminal assistant for US stocks, commodities, forex, and crypto.",
+        "html_url":  "https://github.com/NoFxAiOS/nofx"
+    },
+    {
+        "full_name":  "BlockRunAI/ClawRouter",
+        "stars":  6671,
+        "has_discussions":  true,
+        "language":  "TypeScript",
+        "description":  "The agent-native LLM router for autonomous agents. Every frontier model behind one wallet, \u003c1ms local routing, USDC payments on Base \u0026 Solana via x402.",
+        "html_url":  "https://github.com/BlockRunAI/ClawRouter"
+    },
+    {
+        "full_name":  "nirholas/fresh-start",
+        "stars":  6224,
+        "has_discussions":  true,
+        "language":  null,
+        "description":  "Record of the former nirholas/claude-code mirror: the DMCA, the leak timeline and the x402 correction. No Anthropic code",
+        "html_url":  "https://github.com/nirholas/fresh-start"
+    },
+    {
+        "full_name":  "vAPI-Network/vapi-network",
+        "stars":  5893,
+        "has_discussions":  true,
+        "language":  "TypeScript",
+        "description":  "Buyer-controlled client for x402 API payments in USDC on Base.",
+        "html_url":  "https://github.com/vAPI-Network/vapi-network"
+    },
+    {
+        "full_name":  "bmoscon/cryptofeed",
+        "stars":  3048,
+        "has_discussions":  true,
+        "language":  "Python",
+        "description":  "Cryptocurrency Exchange Websocket Data Feed Handler",
+        "html_url":  "https://github.com/bmoscon/cryptofeed"
+    },
+    {
+        "full_name":  "Bitterbot-AI/bitterbot-desktop",
+        "stars":  2483,
+        "has_discussions":  true,
+        "language":  "TypeScript",
+        "description":  "Bitterbot - a mesh of agents that turns shared experience into collective capability.",
+        "html_url":  "https://github.com/Bitterbot-AI/bitterbot-desktop"
+    },
+    {
+        "full_name":  "family/connectkit",
+        "stars":  1075,
+        "has_discussions":  true,
+        "language":  "TypeScript",
+        "description":  "Connecting a wallet, made simple.",
+        "html_url":  "https://github.com/family/connectkit"
+    },
+    {
+        "full_name":  "coinbase/onchainkit",
+        "stars":  1043,
+        "has_discussions":  true,
+        "language":  "TypeScript",
+        "description":  "React components and TypeScript utilities to help you build top-tier onchain apps.",
+        "html_url":  "https://github.com/coinbase/onchainkit"
+    },
+    {
+        "full_name":  "gazbert/bxbot",
+        "stars":  862,
+        "has_discussions":  true,
+        "language":  "Java",
+        "description":  "A simple Bitcoin trading bot written in Java.",
+        "html_url":  "https://github.com/gazbert/bxbot"
+    },
+    {
+        "full_name":  "usehelix/helix",
+        "stars":  817,
+        "has_discussions":  true,
+        "language":  "TypeScript",
+        "description":  "Self-healing infrastructure for AI agent payments. 90.3% auto-recovery.",
+        "html_url":  "https://github.com/usehelix/helix"
+    },
+    {
+        "full_name":  "google-agentic-commerce/a2a-x402",
+        "stars":  573,
+        "has_discussions":  true,
+        "language":  "Python",
+        "description":  "The A2A x402 Extension brings cryptocurrency payments to the Agent-to-Agent (A2A) protocol, enabling agents to monetize their services through on-chain payments. This extension revives the spirit of HTTP 402 \"Payment Required\" for the decentralized agent ecosystem.",
+        "html_url":  "https://github.com/google-agentic-commerce/a2a-x402"
+    },
+    {
+        "full_name":  "qntx/bot",
+        "stars":  572,
+        "has_discussions":  true,
+        "language":  "Rust",
+        "description":  "Local desktop AI bot",
+        "html_url":  "https://github.com/qntx/bot"
+    },
+    {
+        "full_name":  "coinbase/cds",
+        "stars":  513,
+        "has_discussions":  true,
+        "language":  "TypeScript",
+        "description":  "Coinbase Design System",
+        "html_url":  "https://github.com/coinbase/cds"
+    },
+    {
+        "full_name":  "eprbell/rp2",
+        "stars":  403,
+        "has_discussions":  true,
+        "language":  "Python",
+        "description":  "Privacy-focused, free, open-source cryptocurrency tax calculator for multiple countries: it handles multiple coins/exchanges and computes long/short-term capital gains, cost bases, in/out lot relationships/fractioning, and account balances. It supports FIFO, LIFO, HIFO and it outputs in form 8949 format. It has a programmable plugin architecture",
+        "html_url":  "https://github.com/eprbell/rp2"
+    },
+    {
+        "full_name":  "nuanu-ai/agent-payment-node",
+        "stars":  62,
+        "has_discussions":  true,
+        "language":  "TypeScript",
+        "description":  "Agent Payment Node (APN): open-source local-first payment runtime and MCP server for AI agents. x402, USDC, EVM, Solana, TRON.",
+        "html_url":  "https://github.com/nuanu-ai/agent-payment-node"
+    },
+    {
+        "full_name":  "MikeyPetrillo/Agent402",
+        "stars":  54,
+        "has_discussions":  true,
+        "language":  "JavaScript",
+        "description":  "The payment and trust layer for agent commerce: agents find, pay for and verify paid calls across x402 and MPP, backed by signed receipts. Open source, self-hostable.",
+        "html_url":  "https://github.com/MikeyPetrillo/Agent402"
+    },
+    {
+        "full_name":  "Agoragentic/agoragentic-integrations",
+        "stars":  46,
+        "has_discussions":  true,
+        "language":  "JavaScript",
+        "description":  "Public adapters and discovery catalog for Triptych OS (Agent OS): agent frameworks, MCP/A2A/x402 protocols, workflows, wallets, SDKs, and examples for execute-first routing, governed handoffs, and receipt-aware agent commerce.",
+        "html_url":  "https://github.com/Agoragentic/agoragentic-integrations"
+    },
+    {
+        "full_name":  "nirholas/universal-crypto-mcp",
+        "stars":  44,
+        "has_discussions":  true,
+        "language":  "TypeScript",
+        "description":  "MCP server with hundreds of tools for EVM chains: balances, gas, price feeds, wallets, DeFi and x402 payments.",
+        "html_url":  "https://github.com/nirholas/universal-crypto-mcp"
+    },
+    {
+        "full_name":  "nirholas/UCAI",
+        "stars":  38,
+        "has_discussions":  true,
+        "language":  "Python",
+        "description":  "UCAI: a Python CLI that generates MCP servers from smart contract ABIs so AI agents can read and call EVM contracts.",
+        "html_url":  "https://github.com/nirholas/UCAI"
+    },
+    {
+        "full_name":  "nirholas/bnbchain-mcp",
+        "stars":  35,
+        "has_discussions":  true,
+        "language":  "TypeScript",
+        "description":  "MCP server giving AI agents BNB Chain, opBNB and Greenfield tools for chain data, token safety, swaps and storage.",
+        "html_url":  "https://github.com/nirholas/bnbchain-mcp"
+    },
+    {
+        "full_name":  "NSPG13/agent-bounties",
+        "stars":  20,
+        "has_discussions":  true,
+        "language":  "Rust",
+        "description":  "Agentizable: an open-source bounty network where AI agents post, fund, claim, solve, verify, and get paid for digital work.",
+        "html_url":  "https://github.com/NSPG13/agent-bounties"
+    },
+    {
+        "full_name":  "Eskyee/agentbot-opensource",
+        "stars":  17,
+        "has_discussions":  true,
+        "language":  "TypeScript",
+        "description":  "Open-source multi-tenant AI agent platform. Docker isolation, multi-channel, SIWE auth. Built on OpenClaw + Base. Our token is community-run. Agentbot builds the platform, while the market belongs to the community. ",
+        "html_url":  "https://github.com/Eskyee/agentbot-opensource"
+    },
+    {
+        "full_name":  "omermaksutii/RugProof",
+        "stars":  13,
+        "has_discussions":  true,
+        "language":  "JavaScript",
+        "description":  "Smart contract security auditor for Claude Code — vuln detection, exploit PoCs, mainnet-fork simulation, audit cards, on-chain certificates. Solidity + Vyper · 38 commands · 19 agents · 33 skills · 9 MCP servers.",
+        "html_url":  "https://github.com/omermaksutii/RugProof"
+    },
+    {
+        "full_name":  "internet-court/internet-court-skill",
+        "stars":  7212,
+        "has_discussions":  false,
+        "language":  "TypeScript",
+        "description":  "The trust layer for agent-to-agent commerce — natural-language mandates, ERC-7710 delegated permissions, x402 payments, escrow, and dispute resolution as one open, catch-all Agent Skill / Claude Code plugin.",
+        "html_url":  "https://github.com/internet-court/internet-court-skill"
+    },
+    {
+        "full_name":  "x402-foundation/x402",
+        "stars":  6833,
+        "has_discussions":  false,
+        "language":  "TypeScript",
+        "description":  "A payments protocol for the internet. Built on HTTP.",
+        "html_url":  "https://github.com/x402-foundation/x402"
+    },
+    {
+        "full_name":  "Haehnchen/crypto-trading-bot",
+        "stars":  3551,
+        "has_discussions":  false,
+        "language":  "TypeScript",
+        "description":  "Cryptocurrency trading bot in javascript for Bitfinex, Bitmex, Binance, Bybit ... (public edition)",
+        "html_url":  "https://github.com/Haehnchen/crypto-trading-bot"
+    },
+    {
+        "full_name":  "alsk1992/CloddsBot",
+        "stars":  3132,
+        "has_discussions":  false,
+        "language":  "TypeScript",
+        "description":  "Open Source AI trading agent that operates autonomously across 1000+ markets - Polymarket, Kalshi, Binance, Hyperliquid, Solana DEXs, 5 EVM chains. Scans    for edge, executes instantly, manages risk while you sleep. Agent commerce protocol for machine-to-machine payments. Self-hosted. Built on Claude.",
+        "html_url":  "https://github.com/alsk1992/CloddsBot"
+    },
+    {
+        "full_name":  "solana-foundation/pay",
+        "stars":  1810,
+        "has_discussions":  false,
+        "language":  "Rust",
+        "description":  "CLI for Agentic payments (x402, MPP, AP2).",
+        "html_url":  "https://github.com/solana-foundation/pay"
+    },
+    {
+        "full_name":  "coinbase/coinbase-wallet-sdk",
+        "stars":  1772,
+        "has_discussions":  false,
+        "language":  "TypeScript",
+        "description":  "An open protocol that lets users connect their mobile wallets to your DApp",
+        "html_url":  "https://github.com/coinbase/coinbase-wallet-sdk"
+    },
+    {
+        "full_name":  "auscaster/frantic-board",
+        "stars":  1153,
+        "has_discussions":  false,
+        "language":  "Shell",
+        "description":  "HELP WANTED: AI AGENTS. Real bounties, real money, every payout sealed to a public ledger. The notice board for gofrantic.com",
+        "html_url":  "https://github.com/auscaster/frantic-board"
+    }
+]
